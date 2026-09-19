@@ -1,0 +1,1190 @@
+<!doctype html>
+<html lang="zh-CN">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>变压器工作原理演示</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #F4F3EC;
+  color: #0C0302;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* 顶部标题 */
+.header {
+  text-align: center;
+  padding: 24px 20px 16px;
+  position: relative;
+  border-bottom: 2px solid #FF5600;
+  background: linear-gradient(180deg, #fff 0%, #F4F3EC 100%);
+}
+
+.header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0C0302;
+  letter-spacing: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header h1::before,
+.header h1::after {
+  content: '';
+  display: inline-block;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #FF5600, #FF8941);
+  border-radius: 2px;
+}
+
+.header-sub {
+  font-size: 13px;
+  color: #74706E;
+  margin-top: 6px;
+  letter-spacing: 2px;
+}
+
+.header-deco {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.header-deco span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #FF5600;
+  opacity: 0.5;
+}
+
+.header-deco span:nth-child(2) {
+  opacity: 0.75;
+  width: 10px;
+  height: 10px;
+}
+
+.header-deco span:nth-child(3) {
+  opacity: 1;
+  width: 8px;
+  height: 8px;
+}
+
+/* 主体布局 */
+.main-container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* 左侧控制区 */
+.left-panel {
+  width: 320px;
+  min-width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(12,3,2,0.06);
+  border: 1px solid rgba(255,86,0,0.08);
+}
+
+.panel-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #FF5600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0efea;
+}
+
+.panel-card h3 .icon {
+  width: 24px;
+  height: 24px;
+  background: #FF5600;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* 滑块样式 */
+.slider-group {
+  margin-bottom: 16px;
+}
+
+.slider-group:last-child {
+  margin-bottom: 0;
+}
+
+.slider-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.slider-label .name {
+  font-size: 13px;
+  color: #0C0302;
+  font-weight: 500;
+}
+
+.slider-label .value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #FF5600;
+  background: rgba(255,86,0,0.08);
+  padding: 2px 10px;
+  border-radius: 20px;
+  min-width: 70px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e8e6e0;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #FF5600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(255,86,0,0.4);
+  transition: transform 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #FF5600;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(255,86,0,0.4);
+}
+
+/* 公式面板 */
+.formula-card {
+  background: linear-gradient(135deg, #fff 0%, #fef9f5 100%);
+}
+
+.formula-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formula-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255,86,0,0.04);
+  border-radius: 8px;
+  border-left: 3px solid #FF8941;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.formula-item:hover {
+  background: rgba(255,86,0,0.08);
+  transform: translateX(4px);
+}
+
+.formula-item .f-label {
+  color: #74706E;
+  min-width: 50px;
+  font-size: 12px;
+}
+
+.formula-item .f-expr {
+  color: #0C0302;
+  font-weight: 500;
+  font-family: "Times New Roman", serif;
+  font-size: 15px;
+}
+
+/* 右侧可视化区 */
+.right-panel {
+  flex: 1;
+  min-width: 0;
+}
+
+.canvas-container {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(12,3,2,0.06);
+  border: 1px solid rgba(255,86,0,0.08);
+  overflow: hidden;
+  position: relative;
+}
+
+.canvas-container canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.transformer-type-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  transition: all 0.5s;
+  z-index: 2;
+}
+
+.transformer-type-badge.step-up {
+  background: linear-gradient(135deg, #FF5600, #FF8941);
+}
+
+.transformer-type-badge.step-down {
+  background: linear-gradient(135deg, #2196F3, #42A5F5);
+}
+
+.transformer-type-badge.equal {
+  background: linear-gradient(135deg, #74706E, #999);
+}
+
+/* 底部数据面板 */
+.bottom-panel {
+  padding: 0 20px 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.data-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.data-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(12,3,2,0.06);
+  border: 1px solid rgba(255,86,0,0.08);
+}
+
+.data-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0efea;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.data-card h4 .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.data-card.primary h4 .dot {
+  background: #FF5600;
+}
+
+.data-card.secondary h4 .dot {
+  background: #FF8941;
+}
+
+.data-card.primary h4 {
+  color: #FF5600;
+}
+
+.data-card.secondary h4 {
+  color: #FF8941;
+}
+
+.data-items {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.data-item {
+  text-align: center;
+  padding: 12px 8px;
+  background: #fafaf7;
+  border-radius: 10px;
+  transition: all 0.3s;
+}
+
+.data-item:hover {
+  background: rgba(255,86,0,0.06);
+  transform: translateY(-2px);
+}
+
+.data-item .d-label {
+  font-size: 11px;
+  color: #74706E;
+  margin-bottom: 6px;
+}
+
+.data-item .d-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #FF5600;
+  transition: all 0.3s;
+  font-variant-numeric: tabular-nums;
+}
+
+.data-card.secondary .data-item .d-value {
+  color: #FF8941;
+}
+
+.data-item .d-unit {
+  font-size: 11px;
+  color: #74706E;
+  margin-top: 2px;
+}
+
+/* 响应式 */
+@media (max-width: 900px) {
+  .main-container {
+    flex-direction: column;
+  }
+  .left-panel {
+    width: 100%;
+    min-width: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .left-panel .panel-card {
+    flex: 1;
+    min-width: 260px;
+  }
+  .data-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .header h1 {
+    font-size: 20px;
+    letter-spacing: 2px;
+  }
+  .header h1::before,
+  .header h1::after {
+    width: 20px;
+  }
+  .main-container {
+    padding: 12px;
+    gap: 12px;
+  }
+  .left-panel .panel-card {
+    min-width: 100%;
+  }
+  .data-items {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .data-item .d-value {
+    font-size: 18px;
+  }
+  .bottom-panel {
+    padding: 0 12px 16px;
+  }
+}
+</style>
+  <meta name="copyright" content="学科网（zxxk.com）版权所有">
+  <meta name="signature" content="QQABAQIAogCgAIBAARhCUwFqCkOYkBACCCgGAAAUoAAASANABCA=">
+ </head>
+ <body>
+  <script type="application/json" id="config-data">
+{
+  "sliders": [
+    {"id": "n1", "label": "\u539f\u7ebf\u5708\u532e\u6570 n\u2081", "min": 50, "max": 500, "default": 100, "unit": "\u532e", "step": 10},
+    {"id": "n2", "label": "\u526f\u7ebf\u5708\u532e\u6570 n\u2082", "min": 50, "max": 500, "default": 200, "unit": "\u532e", "step": 10},
+    {"id": "u1", "label": "\u8f93\u5165\u7535\u538b U\u2081", "min": 100, "max": 380, "default": 220, "unit": "V", "step": 1},
+    {"id": "r", "label": "\u8d1f\u8f7d\u7535\u963b R", "min": 10, "max": 500, "default": 100, "unit": "\u03a9", "step": 1}
+  ],
+  "formulas": [
+    {"label": "\u53d8\u538b\u6bd4", "expr": "k = n\u2081 / n\u2082"},
+    {"label": "\u7535\u538b", "expr": "U\u2081/U\u2082 = n\u2081/n\u2082"},
+    {"label": "\u7535\u6d41", "expr": "I\u2081/I\u2082 = n\u2082/n\u2081"},
+    {"label": "\u529f\u7387", "expr": "P\u2081 = P\u2082 (\u7406\u60f3)"}
+  ]
+}
+</script>
+  <header class="header">
+   <h1>变压器工作原理演示</h1>
+   <div class="header-sub">
+    高中物理 · 交变电流与变压器 · 理想变压器模型
+   </div>
+   <div class="header-deco">
+    <span></span><span></span><span></span>
+   </div>
+  </header>
+  <div class="main-container">
+   <div class="left-panel">
+    <div class="panel-card">
+     <h3><span class="icon">⚙</span>参数调节</h3>
+     <div id="sliders-container"></div>
+    </div>
+    <div class="panel-card formula-card">
+     <h3><span class="icon">∑</span>核心公式</h3>
+     <div class="formula-list" id="formula-list"></div>
+    </div>
+   </div>
+   <div class="right-panel">
+    <div class="canvas-container">
+     <canvas id="mainCanvas"></canvas>
+     <div class="transformer-type-badge" id="typeBadge">
+      升压变压器
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="bottom-panel">
+   <div class="data-grid">
+    <div class="data-card primary">
+     <h4><span class="dot"></span>原线圈（一次侧）</h4>
+     <div class="data-items">
+      <div class="data-item">
+       <div class="d-label">
+        电压 U₁
+       </div>
+       <div class="d-value" id="disp-u1">
+        220.0
+       </div>
+       <div class="d-unit">
+        V
+       </div>
+      </div>
+      <div class="data-item">
+       <div class="d-label">
+        电流 I₁
+       </div>
+       <div class="d-value" id="disp-i1">
+        0.0<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAVCAIAAADelck2AAAAh0lEQVR42u1UQQ7AIAjr/x8Ny046oVC97CIxZiIUKDj4Kzbt6XH5njVUkCktW0xv32zGAnFzAlEEWI0RYrbOXrKRQLdZxzbUXo7iTi4it4FW/paNx6y9ZIBCsPQhd9w69tcrfa5T9iu6IBO624AB3c6pkeHzUEf10JUA/W9EhD6RC32hf4N+ABOOWgRpnJewAAAAAElFTkSuQmCC" style="position: absolute; left: -99999px; top: -99999px; opacity: 0; pointer-events: none; width: 1px; height: 1px;">
+       </div>
+       <div class="d-unit">
+        A
+       </div>
+      </div>
+      <div class="data-item">
+       <div class="d-label">
+        功率 P₁
+       </div>
+       <div class="d-value" id="disp-p1">
+        0.0
+       </div>
+       <div class="d-unit">
+        W
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="data-card secondary">
+     <h4><span class="dot"></span>副线圈（二次侧）</h4>
+     <div class="data-items">
+      <div class="data-item">
+       <div class="d-label">
+        电压 U₂
+       </div>
+       <div class="d-value" id="disp-u2">
+        0.0
+       </div>
+       <div class="d-unit">
+        V
+       </div>
+      </div>
+      <div class="data-item">
+       <div class="d-label">
+        电流 I₂
+       </div>
+       <div class="d-value" id="disp-i2">
+        0.0
+       </div>
+       <div class="d-unit">
+        A
+       </div>
+      </div>
+      <div class="data-item">
+       <div class="d-label">
+        功率 P₂
+       </div>
+       <div class="d-value" id="disp-p2">
+        0.0
+       </div>
+       <div class="d-unit">
+        W
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+(function() {
+  // Parse config
+  var config = JSON.parse(document.getElementById('config-data').textContent);
+
+  // State
+  var state = {};
+  config.sliders.forEach(function(s) {
+    state[s.id] = s.default;
+  });
+
+  // Display values for smooth animation
+  var displayValues = { u1: 0, i1: 0, p1: 0, u2: 0, i2: 0, p2: 0 };
+  var targetValues = { u1: 0, i1: 0, p1: 0, u2: 0, i2: 0, p2: 0 };
+
+  var lastType = null; // 'up', 'down', 'equal'
+
+  // Build sliders
+  var slidersContainer = document.getElementById('sliders-container');
+  config.sliders.forEach(function(s) {
+    var group = document.createElement('div');
+    group.className = 'slider-group';
+    group.innerHTML =
+      '<div class="slider-label">' +
+        '<span class="name">' + s.label + '</span>' +
+        '<span class="value" id="sv-' + s.id + '">' + s.default + ' ' + s.unit + '</span>' +
+      '</div>' +
+      '<input type="range" id="sl-' + s.id + '" min="' + s.min + '" max="' + s.max + '" value="' + s.default + '" step="' + s.step + '">';
+    slidersContainer.appendChild(group);
+
+    var input = document.getElementById('sl-' + s.id);
+    input.addEventListener('input', function() {
+      state[s.id] = parseInt(this.value);
+      document.getElementById('sv-' + s.id).textContent = this.value + ' ' + s.unit;
+      recalculate();
+    });
+  });
+
+  // Build formulas
+  var formulaList = document.getElementById('formula-list');
+  config.formulas.forEach(function(f) {
+    var item = document.createElement('div');
+    item.className = 'formula-item';
+    item.innerHTML = '<span class="f-label">' + f.label + '</span><span class="f-expr">' + f.expr + '</span>';
+    formulaList.appendChild(item);
+  });
+
+  // Calculation
+  function recalculate() {
+    var n1 = state.n1, n2 = state.n2, u1 = state.u1, r = state.r;
+    var u2 = u1 * (n2 / n1);
+    var i2 = u2 / r;
+    var i1 = i2 * (n2 / n1);
+    var p1 = u1 * i1;
+    var p2 = u2 * i2;
+
+    targetValues.u1 = u1;
+    targetValues.i1 = i1;
+    targetValues.p1 = p1;
+    targetValues.u2 = u2;
+    targetValues.i2 = i2;
+    targetValues.p2 = p2;
+
+    // Type detection
+    var type;
+    if (n2 > n1) type = 'up';
+    else if (n2 < n1) type = 'down';
+    else type = 'equal';
+
+    var badge = document.getElementById('typeBadge');
+    if (type === 'up') {
+      badge.textContent = '升压变压器';
+      badge.className = 'transformer-type-badge step-up';
+    } else if (type === 'down') {
+      badge.textContent = '降压变压器';
+      badge.className = 'transformer-type-badge step-down';
+    } else {
+      badge.textContent = '等压变压器';
+      badge.className = 'transformer-type-badge equal';
+    }
+
+    // Speech
+    if (lastType !== null && lastType !== type) {
+      speak(type === 'up' ? '当前为升压变压器' : type === 'down' ? '当前为降压变压器' : '当前为等压变压器');
+    }
+    lastType = type;
+  }
+
+  // Smooth display update
+  function updateDisplayValues() {
+    var keys = ['u1', 'i1', 'p1', 'u2', 'i2', 'p2'];
+    keys.forEach(function(k) {
+      displayValues[k] += (targetValues[k] - displayValues[k]) * 0.15;
+      if (Math.abs(displayValues[k] - targetValues[k]) < 0.05) {
+        displayValues[k] = targetValues[k];
+      }
+      var el = document.getElementById('disp-' + k);
+      if (el) el.textContent = displayValues[k].toFixed(1);
+    });
+  }
+
+  // Speech
+  function speak(text) {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      var utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'zh-CN';
+      utter.rate = 1;
+      window.speechSynthesis.speak(utter);
+    }
+  }
+
+  // Canvas
+  var canvas = document.getElementById('mainCanvas');
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  var cw, ch;
+  var animTime = 0;
+
+  function resizeCanvas() {
+    var container = canvas.parentElement;
+    var w = container.clientWidth;
+    var h = Math.max(400, Math.min(520, w * 0.55));
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cw = w;
+    ch = h;
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  // Drawing helpers
+  function drawRoundedRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  // Main draw
+  function draw() {
+    animTime += 0.02;
+    updateDisplayValues();
+
+    ctx.clearRect(0, 0, cw, ch);
+
+    // Layout parameters
+    var cx = cw / 2;
+    var cy = ch / 2;
+
+    // Iron core dimensions
+    var coreW = cw * 0.42;
+    var coreH = ch * 0.52;
+    var coreThick = 18;
+    var coreX = cx - coreW / 2;
+    var coreY = cy - coreH / 2;
+
+    // Draw iron core (E-I shape simplified as rectangular frame)
+    ctx.save();
+
+    // Core shadow
+    ctx.fillStyle = 'rgba(12,3,2,0.05)';
+    drawRoundedRect(coreX + 3, coreY + 3, coreW, coreH, 6);
+    ctx.fill();
+
+    // Core outer
+    ctx.fillStyle = '#8B8680';
+    drawRoundedRect(coreX, coreY, coreW, coreH, 6);
+    ctx.fill();
+
+    // Core inner (hollow)
+    ctx.fillStyle = '#F4F3EC';
+    var innerMargin = coreThick;
+    drawRoundedRect(coreX + innerMargin, coreY + innerMargin, coreW - 2 * innerMargin, coreH - 2 * innerMargin, 3);
+    ctx.fill();
+
+    // Center pillar
+    var pillarW = coreThick;
+    var pillarX = cx - pillarW / 2;
+    ctx.fillStyle = '#8B8680';
+    ctx.fillRect(pillarX, coreY + innerMargin, pillarW, coreH - 2 * innerMargin);
+
+    // Core texture lines
+    ctx.strokeStyle = 'rgba(12,3,2,0.1)';
+    ctx.lineWidth = 0.5;
+    for (var i = 0; i < 6; i++) {
+      var ly = coreY + innerMargin * 0.3 + i * (coreH * 0.12);
+      // Top bar
+      ctx.beginPath();
+      ctx.moveTo(coreX + 4, coreY + 3 + i * 2.5);
+      ctx.lineTo(coreX + coreW - 4, coreY + 3 + i * 2.5);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+
+    // Coil parameters
+    var n1 = state.n1, n2 = state.n2;
+    var maxTurns = 16;
+    var minTurns = 5;
+    var turns1 = Math.round(minTurns + (n1 - 50) / 450 * (maxTurns - minTurns));
+    var turns2 = Math.round(minTurns + (n2 - 50) / 450 * (maxTurns - minTurns));
+
+    var coilTop = coreY + innerMargin + 8;
+    var coilBottom = coreY + coreH - innerMargin - 8;
+    var coilH = coilBottom - coilTop;
+
+    // Primary coil (left side)
+    var coil1X = coreX + innerMargin / 2;
+    drawCoil(coil1X, coilTop, coilH, turns1, '#FF5600', 'left', true);
+
+    // Secondary coil (right side)
+    var coil2X = coreX + coreW - innerMargin / 2;
+    drawCoil(coil2X, coilTop, coilH, turns2, '#FF8941', 'right', false);
+
+    // Magnetic field animation in core
+    drawMagneticField(coreX, coreY, coreW, coreH, innerMargin, pillarX, pillarW);
+
+    // AC source symbol (left)
+    var srcX = coreX - 60;
+    var srcY = cy;
+    drawACSource(srcX, srcY);
+
+    // Load resistor (right)
+    var loadX = coreX + coreW + 60;
+    var loadY = cy;
+    drawResistor(loadX, loadY);
+
+    // Wires and current arrows
+    drawCircuit(coreX, coreY, coreW, coreH, innerMargin, coilTop, coilBottom, srcX, loadX, coil1X, coil2X);
+
+    // Labels
+    ctx.font = '13px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+
+    // Primary label
+    ctx.fillStyle = '#FF5600';
+    ctx.font = 'bold 13px -apple-system, sans-serif';
+    ctx.fillText('原线圈', coil1X, coreY - 12);
+    ctx.font = '11px -apple-system, sans-serif';
+    ctx.fillStyle = '#74706E';
+    ctx.fillText('n₁=' + n1 + '匝', coil1X, coreY - 0);
+
+    // Secondary label
+    ctx.fillStyle = '#FF8941';
+    ctx.font = 'bold 13px -apple-system, sans-serif';
+    ctx.fillText('副线圈', coil2X, coreY - 12);
+    ctx.font = '11px -apple-system, sans-serif';
+    ctx.fillStyle = '#74706E';
+    ctx.fillText('n₂=' + n2 + '匝', coil2X, coreY - 0);
+
+    // AC source label
+    ctx.fillStyle = '#74706E';
+    ctx.font = '11px -apple-system, sans-serif';
+    ctx.fillText('交流电源', srcX, srcY + 36);
+
+    // Load label
+    ctx.fillText('负载 R', loadX, loadY + 36);
+
+    // Ratio display
+    ctx.fillStyle = '#0C0302';
+    ctx.font = 'bold 14px -apple-system, sans-serif';
+    ctx.fillText('k = ' + (n1/n2).toFixed(2), cx, coreY + coreH + 30);
+
+    requestAnimationFrame(draw);
+  }
+
+  function drawCoil(x, top, height, turns, color, side, isPrimary) {
+    var spacing = height / (turns + 1);
+    var coilWidth = 22;
+    var dir = side === 'left' ? -1 : 1;
+
+    ctx.save();
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+
+    for (var i = 0; i < turns; i++) {
+      var y = top + spacing * (i + 0.5);
+      var nextY = top + spacing * (i + 1.5);
+      if (i >= turns - 1) nextY = top + height;
+
+      // Coil arc
+      var arcCx = x + dir * coilWidth * 0.5;
+      var arcCy = (y + nextY) / 2;
+      var arcRx = coilWidth * 0.6;
+      var arcRy = spacing * 0.45;
+
+      // Draw semi-ellipse (the visible part of the coil)
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.globalAlpha = 0.9;
+
+      // Back part (behind core) - lighter
+      ctx.save();
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.ellipse(x, arcCy, arcRx * 0.4, arcRy, 0, dir > 0 ? Math.PI : 0, dir > 0 ? 0 : Math.PI);
+      ctx.stroke();
+      ctx.restore();
+
+      // Front part
+      ctx.beginPath();
+      ctx.ellipse(x, arcCy, arcRx, arcRy, 0, dir > 0 ? 0 : Math.PI, dir > 0 ? Math.PI : 0);
+      ctx.stroke();
+    }
+
+    // Current flow animation on coil
+    var currentSpeed = isPrimary ? displayValues.i1 : displayValues.i2;
+    var normalizedSpeed = Math.min(currentSpeed / 5, 1);
+    if (normalizedSpeed > 0.01) {
+      for (var j = 0; j < 3; j++) {
+        var phase = (animTime * (1 + normalizedSpeed * 3) + j * 2.1) % (turns);
+        var idx = Math.floor(phase);
+        var frac = phase - idx;
+        if (idx < turns) {
+          var py = top + spacing * (idx + 0.5 + frac);
+          ctx.beginPath();
+          ctx.arc(x + dir * coilWidth * 0.6, py, 3, 0, Math.PI * 2);
+          ctx.fillStyle = color;
+          ctx.globalAlpha = 0.8;
+          ctx.fill();
+        }
+      }
+    }
+
+    ctx.restore();
+  }
+
+  function drawMagneticField(coreX, coreY, coreW, coreH, margin, pillarX, pillarW) {
+    ctx.save();
+    var speed = 1 + Math.min(displayValues.i1 / 3, 2);
+
+    // Magnetic flux dots/crosses in the two windows
+    // Left window
+    var lx1 = coreX + margin + 4;
+    var lx2 = pillarX - 4;
+    var ly1 = coreY + margin + 4;
+    var ly2 = coreY + coreH - margin - 4;
+
+    // Right window
+    var rx1 = pillarX + pillarW + 4;
+    var rx2 = coreX + coreW - margin - 4;
+
+    // Animated dashes along the core path
+    var dashLen = 8;
+    var gapLen = 12;
+    var offset = (animTime * 40 * speed) % (dashLen + gapLen);
+
+    ctx.strokeStyle = '#FF5600';
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.4 + 0.3 * Math.sin(animTime * 2);
+    ctx.setLineDash([dashLen, gapLen]);
+    ctx.lineDashOffset = -offset;
+
+    // Path: top bar left to right
+    var pathMidY_top = coreY + margin / 2;
+    var pathMidY_bot = coreY + coreH - margin / 2;
+    var pathMidX_left = coreX + margin / 2;
+    var pathMidX_right = coreX + coreW - margin / 2;
+    var pathMidX_center = pillarX + pillarW / 2;
+
+    // Draw magnetic field path (clockwise in left window, counterclockwise in right)
+    // Left loop
+    ctx.beginPath();
+    ctx.moveTo(pathMidX_left, pathMidY_top);
+    ctx.lineTo(pathMidX_center, pathMidY_top);
+    ctx.lineTo(pathMidX_center, pathMidY_bot);
+    ctx.lineTo(pathMidX_left, pathMidY_bot);
+    ctx.lineTo(pathMidX_left, pathMidY_top);
+    ctx.stroke();
+
+    // Right loop
+    ctx.beginPath();
+    ctx.moveTo(pathMidX_center, pathMidY_top);
+    ctx.lineTo(pathMidX_right, pathMidY_top);
+    ctx.lineTo(pathMidX_right, pathMidY_bot);
+    ctx.lineTo(pathMidX_center, pathMidY_bot);
+    ctx.lineTo(pathMidX_center, pathMidY_top);
+    ctx.stroke();
+
+    // Animated arrows on the magnetic path
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 0.6;
+
+    var arrowPositions = [];
+    // Top bar
+    var numArrows = 4;
+    for (var a = 0; a < numArrows; a++) {
+      var t = ((animTime * speed * 0.5 + a / numArrows) % 1);
+      // Left loop top: left to center
+      var ax = pathMidX_left + t * (pathMidX_center - pathMidX_left);
+      arrowPositions.push({ x: ax, y: pathMidY_top, angle: 0 });
+
+      // Right loop top: center to right
+      ax = pathMidX_center + t * (pathMidX_right - pathMidX_center);
+      arrowPositions.push({ x: ax, y: pathMidY_top, angle: 0 });
+
+      // Bottom: right to left
+      ax = pathMidX_right - t * (pathMidX_right - pathMidX_center);
+      arrowPositions.push({ x: ax, y: pathMidY_bot, angle: Math.PI });
+
+      ax = pathMidX_center - t * (pathMidX_center - pathMidX_left);
+      arrowPositions.push({ x: ax, y: pathMidY_bot, angle: Math.PI });
+    }
+
+    ctx.fillStyle = '#FF5600';
+    arrowPositions.forEach(function(ap) {
+      ctx.save();
+      ctx.translate(ap.x, ap.y);
+      ctx.rotate(ap.angle);
+      ctx.beginPath();
+      ctx.moveTo(5, 0);
+      ctx.lineTo(-3, -3);
+      ctx.lineTo(-3, 3);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    });
+
+    ctx.restore();
+  }
+
+  function drawACSource(x, y) {
+    ctx.save();
+    ctx.strokeStyle = '#FF5600';
+    ctx.lineWidth = 2;
+    ctx.fillStyle = 'none';
+
+    // Circle
+    ctx.beginPath();
+    ctx.arc(x, y, 18, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Sine wave inside
+    ctx.beginPath();
+    ctx.lineWidth = 1.5;
+    for (var i = -12; i <= 12; i++) {
+      var px = x + i;
+      var py = y - Math.sin((i / 12) * Math.PI * 2 + animTime * 3) * 6;
+      if (i === -12) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    // + and - terminals
+    ctx.fillStyle = '#FF5600';
+    ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = 'center';
+
+    ctx.restore();
+  }
+
+  function drawResistor(x, y) {
+    ctx.save();
+    ctx.strokeStyle = '#FF8941';
+    ctx.lineWidth = 2;
+
+    // Zigzag resistor
+    var rw = 24, rh = 10;
+    var segments = 5;
+    ctx.beginPath();
+    ctx.moveTo(x, y - rh * segments / 2);
+    for (var i = 0; i < segments; i++) {
+      var sy = y - rh * segments / 2 + i * rh;
+      ctx.lineTo(x + (i % 2 === 0 ? rw / 2 : -rw / 2), sy + rh / 2);
+      ctx.lineTo(x, sy + rh);
+    }
+    ctx.stroke();
+
+    // Box around
+    ctx.strokeStyle = '#FF8941';
+    ctx.lineWidth = 1.5;
+    drawRoundedRect(x - rw / 2 - 4, y - rh * segments / 2 - 4, rw + 8, rh * segments + 8, 4);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawCircuit(coreX, coreY, coreW, coreH, margin, coilTop, coilBottom, srcX, loadX, coil1X, coil2X) {
+    ctx.save();
+
+    var wireTop = coilTop - 15;
+    var wireBot = coilBottom + 15;
+
+    // Primary circuit wires
+    ctx.strokeStyle = '#FF5600';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([]);
+
+    // Top wire: source to coil1
+    ctx.beginPath();
+    ctx.moveTo(srcX, srcX > coil1X ? coilTop : coilTop); // source top
+    ctx.moveTo(srcX, coilTop - 30);
+    ctx.lineTo(srcX, wireTop);
+    ctx.lineTo(coil1X, wireTop);
+    ctx.lineTo(coil1X, coilTop);
+    ctx.stroke();
+
+    // Bottom wire: source to coil1
+    ctx.beginPath();
+    ctx.moveTo(srcX, coilBottom + 30);
+    ctx.lineTo(srcX, wireBot);
+    ctx.lineTo(coil1X, wireBot);
+    ctx.lineTo(coil1X, coilBottom);
+    ctx.stroke();
+
+    // Source connections
+    ctx.beginPath();
+    ctx.moveTo(srcX, coilTop - 30);
+    ctx.lineTo(srcX, srcX > 0 ? coreY + coreH / 2 - 18 : coilTop - 30);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(srcX, coilBottom + 30);
+    ctx.lineTo(srcX, coreY + coreH / 2 + 18);
+    ctx.stroke();
+
+    // Secondary circuit wires
+    ctx.strokeStyle = '#FF8941';
+
+    // Top wire: coil2 to load
+    ctx.beginPath();
+    ctx.moveTo(coil2X, coilTop);
+    ctx.lineTo(coil2X, wireTop);
+    ctx.lineTo(loadX, wireTop);
+    ctx.lineTo(loadX, coilTop - 5);
+    ctx.stroke();
+
+    // Bottom wire: coil2 to load
+    ctx.beginPath();
+    ctx.moveTo(coil2X, coilBottom);
+    ctx.lineTo(coil2X, wireBot);
+    ctx.lineTo(loadX, wireBot);
+    ctx.lineTo(loadX, coilBottom + 5);
+    ctx.stroke();
+
+    // Current direction arrows on wires
+    var currentI1 = displayValues.i1;
+    var currentI2 = displayValues.i2;
+
+    // Primary current arrows (animated)
+    if (currentI1 > 0.01) {
+      drawCurrentArrows(srcX, wireTop, coil1X, wireTop, '#FF5600', animTime, currentI1, 1);
+      drawCurrentArrows(coil1X, wireBot, srcX, wireBot, '#FF5600', animTime, currentI1, -1);
+    }
+
+    // Secondary current arrows
+    if (currentI2 > 0.01) {
+      drawCurrentArrows(coil2X, wireTop, loadX, wireTop, '#FF8941', animTime, currentI2, 1);
+      drawCurrentArrows(loadX, wireBot, coil2X, wireBot, '#FF8941', animTime, currentI2, -1);
+    }
+
+    ctx.restore();
+  }
+
+  function drawCurrentArrows(x1, y1, x2, y2, color, time, current, dir) {
+    ctx.save();
+    var dx = x2 - x1;
+    var dy = y2 - y1;
+    var len = Math.sqrt(dx * dx + dy * dy);
+    var angle = Math.atan2(dy, dx);
+    var speed = 0.5 + Math.min(current / 3, 2);
+    var numArrows = Math.max(2, Math.floor(len / 50));
+
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.7;
+
+    for (var i = 0; i < numArrows; i++) {
+      var t = ((time * speed + i / numArrows) % 1);
+      var ax = x1 + dx * t;
+      var ay = y1 + dy * t;
+
+      ctx.save();
+      ctx.translate(ax, ay);
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.moveTo(6, 0);
+      ctx.lineTo(-4, -4);
+      ctx.lineTo(-2, 0);
+      ctx.lineTo(-4, 4);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    ctx.restore();
+  }
+
+  // Initialize
+  recalculate();
+
+  // Initialize display values immediately
+  var keys = ['u1', 'i1', 'p1', 'u2', 'i2', 'p2'];
+  keys.forEach(function(k) {
+    displayValues[k] = targetValues[k];
+  });
+
+  // Need user interaction for speech - set flag
+  var userInteracted = false;
+  document.addEventListener('click', function() { userInteracted = true; }, { once: true });
+  document.addEventListener('input', function() { userInteracted = true; }, { once: true });
+
+  // Override speak to check interaction
+  var origSpeak = speak;
+  speak = function(text) {
+    if (userInteracted) origSpeak(text);
+  };
+
+  draw();
+})();
+</script>
+ </body>
+</html>

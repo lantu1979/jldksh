@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="zh-CN">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>交变电流的产生 - 3D交互教学动画</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+// OrbitControls inline implementation
+THREE.OrbitControls=function(e,t){this.object=e;this.domElement=void 0!==t?t:document;this.enabled=!0;this.target=new THREE.Vector3;this.minDistance=0;this.maxDistance=1/0;this.minZoom=0;this.maxZoom=1/0;this.minPolarAngle=0;this.maxPolarAngle=Math.PI;this.minAzimuthAngle=-1/0;this.maxAzimuthAngle=1/0;this.enableDamping=!1;this.dampingFactor=.25;this.enableZoom=!0;this.zoomSpeed=1;this.enableRotate=!0;this.rotateSpeed=1;this.enablePan=!0;this.panSpeed=1;this.screenSpacePanning=!1;this.keyPanSpeed=7;this.autoRotate=!1;this.autoRotateSpeed=2;this.enableKeys=!0;this.keys={LEFT:37,UP:38,RIGHT:39,BOTTOM:40};this.mouseButtons={LEFT:THREE.MOUSE.LEFT,MIDDLE:THREE.MOUSE.MIDDLE,RIGHT:THREE.MOUSE.RIGHT};this.target0=this.target.clone();this.position0=this.object.position.clone();this.zoom0=this.object.zoom;var i=this,n=1e-6,o=0,a=0,r=new THREE.Spherical,s=new THREE.Spherical,l=1,c=new THREE.Vector3,h=!1,d=new THREE.Vector2,u=new THREE.Vector2,p=new THREE.Vector2,m=new THREE.Vector2,f=new THREE.Vector2,g=new THREE.Vector2,v=new THREE.Vector2,y=new THREE.Vector2,b=new THREE.Vector2;function x(){return Math.pow(.95,i.zoomSpeed)}function w(e){s.theta-=e}function _(e){s.phi-=e}var M=function(){var e=new THREE.Vector3;return function(t,i){e.setFromMatrixColumn(i,0);e.multiplyScalar(-t);c.add(e)}}(),S=function(){var e=new THREE.Vector3;return function(t,n){i.screenSpacePanning?e.setFromMatrixColumn(n,1):(e.setFromMatrixColumn(n,0),e.crossVectors(i.object.up,e));e.multiplyScalar(t);c.add(e)}}(),E=function(){var t=new THREE.Vector3;return function(n,o){var a=i.domElement===document?i.domElement.body:i.domElement;if(i.object.isPerspectiveCamera){var r=i.object.position;t.copy(r).sub(i.target);var s=t.length();s*=Math.tan(i.object.fov/2*Math.PI/180);M(2*n*s/a.clientHeight,i.object.matrix);S(2*o*s/a.clientHeight,i.object.matrix)}else i.object.isOrthographicCamera?(M(n*(i.object.right-i.object.left)/i.object.zoom/a.clientWidth,i.object.matrix),S(o*(i.object.top-i.object.bottom)/i.object.zoom/a.clientHeight,i.object.matrix)):console.warn("WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.")}}();function T(t){if(i.object.isPerspectiveCamera)l/=t;else{if(!i.object.isOrthographicCamera)return void console.warn("WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.");i.object.zoom=Math.max(i.minZoom,Math.min(i.maxZoom,i.object.zoom*t));i.object.updateProjectionMatrix();h=!0}}function A(t){if(i.object.isPerspectiveCamera)l*=t;else{if(!i.object.isOrthographicCamera)return void console.warn("WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.");i.object.zoom=Math.max(i.minZoom,Math.min(i.maxZoom,i.object.zoom/t));i.object.updateProjectionMatrix();h=!0}}function L(e){d.set(e.clientX,e.clientY)}function R(e){v.set(e.clientX,e.clientY)}function P(e){m.set(e.clientX,e.clientY)}function C(e){u.set(e.clientX,e.clientY);p.subVectors(u,d).multiplyScalar(i.rotateSpeed);var t=i.domElement===document?i.domElement.body:i.domElement;w(2*Math.PI*p.x/t.clientHeight);_(2*Math.PI*p.y/t.clientHeight);d.copy(u);i.update()}function O(e){y.set(e.clientX,e.clientY);b.subVectors(y,v);b.y>0?T(x()):b.y<0&&A(x());v.copy(y);i.update()}function D(e){f.set(e.clientX,e.clientY);g.subVectors(f,m).multiplyScalar(i.panSpeed);E(g.x,g.y);m.copy(f);i.update()}function I(e){e.preventDefault();e.deltaY<0?A(x()):e.deltaY>0&&T(x());i.update()}function N(e){e.preventDefault();switch(e.button){case i.mouseButtons.LEFT:if(e.ctrlKey||e.metaKey||e.shiftKey){if(!1===i.enablePan)return;P(e);o=2}else{if(!1===i.enableRotate)return;L(e);o=1}break;case i.mouseButtons.MIDDLE:if(!1===i.enableZoom)return;R(e);o=3;break;case i.mouseButtons.RIGHT:if(!1===i.enablePan)return;P(e);o=2}0!==o&&(document.addEventListener("mousemove",U,!1),document.addEventListener("mouseup",F,!1))}function U(e){e.preventDefault();switch(o){case 1:if(!1===i.enableRotate)return;C(e);break;case 3:if(!1===i.enableZoom)return;O(e);break;case 2:if(!1===i.enablePan)return;D(e)}}function F(e){document.removeEventListener("mousemove",U,!1);document.removeEventListener("mouseup",F,!1);o=0}function z(e){var t=0;e.touches.length;switch(o){case 1:if(!1===i.enableRotate)return;d.set(e.touches[0].pageX,e.touches[0].pageY);break;case 3:if(!1===i.enableZoom)return;t=Math.sqrt(Math.pow(e.touches[0].pageX-e.touches[1].pageX,2)+Math.pow(e.touches[0].pageY-e.touches[1].pageY,2));v.set(0,t);break;case 2:if(!1===i.enablePan)return;m.set(.5*(e.touches[0].pageX+e.touches[1].pageX),.5*(e.touches[0].pageY+e.touches[1].pageY))}}function B(e){var t;e.preventDefault();e.stopPropagation();switch(o){case 1:if(!1===i.enableRotate)return;u.set(e.touches[0].pageX,e.touches[0].pageY);p.subVectors(u,d).multiplyScalar(i.rotateSpeed);t=i.domElement===document?i.domElement.body:i.domElement;w(2*Math.PI*p.x/t.clientHeight);_(2*Math.PI*p.y/t.clientHeight);d.copy(u);i.update();break;case 3:if(!1===i.enableZoom)return;t=Math.sqrt(Math.pow(e.touches[0].pageX-e.touches[1].pageX,2)+Math.pow(e.touches[0].pageY-e.touches[1].pageY,2));y.set(0,t);b.set(0,Math.pow(y.y/v.y,i.zoomSpeed));T(b.y);v.copy(y);i.update();break;case 2:if(!1===i.enablePan)return;f.set(.5*(e.touches[0].pageX+e.touches[1].pageX),.5*(e.touches[0].pageY+e.touches[1].pageY));g.subVectors(f,m).multiplyScalar(i.panSpeed);E(g.x,g.y);m.copy(f);i.update()}}function j(e){o=0}function k(e){e.preventDefault();switch(e.touches.length){case 1:if(!1===i.enableRotate)return;o=1;z(e);break;case 2:if(!1===i.enableZoom&&!1===i.enablePan)return;o=e.ctrlKey||e.metaKey||e.shiftKey?3:2;z(e)}}this.getPolarAngle=function(){return r.phi};this.getAzimuthalAngle=function(){return r.theta};this.saveState=function(){i.target0.copy(i.target);i.position0.copy(i.object.position);i.zoom0=i.object.zoom};this.reset=function(){i.target.copy(i.target0);i.object.position.copy(i.position0);i.object.zoom=i.zoom0;i.object.updateProjectionMatrix();i.update();o=0};this.update=function(){var e=new THREE.Vector3,t=(new THREE.Quaternion).setFromUnitVectors(i.object.up,new THREE.Vector3(0,1,0)),a=t.clone().invert(),d=new THREE.Vector3,u=new THREE.Quaternion;return function(){var p=i.object.position;e.copy(p).sub(i.target);e.applyQuaternion(t);r.setFromVector3(e);i.autoRotate&&1===o&&w(2*Math.PI/60/60*i.autoRotateSpeed);r.theta+=s.theta;r.phi+=s.phi;r.theta=Math.max(i.minAzimuthAngle,Math.min(i.maxAzimuthAngle,r.theta));r.phi=Math.max(i.minPolarAngle+n,Math.min(i.maxPolarAngle-n,r.phi));r.makeSafe();r.radius*=l;r.radius=Math.max(i.minDistance,Math.min(i.maxDistance,r.radius));i.target.add(c);e.setFromSpherical(r);e.applyQuaternion(a);p.copy(i.target).add(e);i.object.lookAt(i.target);!0===i.enableDamping?(s.theta*=1-i.dampingFactor,s.phi*=1-i.dampingFactor,c.multiplyScalar(1-i.dampingFactor)):(s.set(0,0,0),c.set(0,0,0));l=1;if(h||d.distanceToSquared(i.object.position)>n||8*(1-u.dot(i.object.quaternion))>n)return d.copy(i.object.position),u.copy(i.object.quaternion),h=!1,!0;return!1}}();this.dispose=function(){i.domElement.removeEventListener("contextmenu",H,!1);i.domElement.removeEventListener("mousedown",N,!1);i.domElement.removeEventListener("wheel",I,!1);i.domElement.removeEventListener("touchstart",k,!1);i.domElement.removeEventListener("touchend",j,!1);i.domElement.removeEventListener("touchmove",B,!1);document.removeEventListener("mousemove",U,!1);document.removeEventListener("mouseup",F,!1)};function H(e){e.preventDefault&&e.preventDefault()}this.domElement.addEventListener("contextmenu",H,!1);this.domElement.addEventListener("mousedown",N,!1);this.domElement.addEventListener("wheel",I,!1);this.domElement.addEventListener("touchstart",k,!1);this.domElement.addEventListener("touchend",j,!1);this.domElement.addEventListener("touchmove",B,!1);this.update()};THREE.OrbitControls.prototype=Object.create(THREE.EventDispatcher.prototype);THREE.OrbitControls.prototype.constructor=THREE.OrbitControls;
+</script>
+  <style>
+body { margin: 0; overflow: hidden; font-family: 'Microsoft YaHei', sans-serif; }
+#canvas3d { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+.ui-overlay { position: fixed; z-index: 10; pointer-events: none; }
+.ui-overlay > * { pointer-events: auto; }
+.glass-panel {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    transition: all 0.3s ease;
+}
+.btn-primary:hover {
+    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(59,130,246,0.4);
+}
+.btn-secondary {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    transition: all 0.3s ease;
+}
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #9ca3af, #6b7280);
+    transform: translateY(-1px);
+}
+.btn-voice {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    transition: all 0.3s ease;
+}
+.btn-voice:hover {
+    background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(139,92,246,0.4);
+}
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+.data-value {
+    font-family: 'Courier New', monospace;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+</style>
+  <meta name="copyright" content="学科网（zxxk.com）版权所有">
+  <meta name="signature" content="QQABBYaQggAgQoBAAQgCEwFaCAMYkAGAAAgGxAAYsAAAiBNABAA=">
+ </head>
+ <body class="bg-gray-900">
+  <canvas id="canvas3d"></canvas><!-- Left Control Panel -->
+  <div class="ui-overlay" style="top: 20px; left: 20px;">
+   <div class="glass-panel p-6" style="width: 280px;">
+    <h1 class="text-white text-xl font-bold mb-1 flex items-center"><span class="inline-block w-2 h-6 bg-blue-500 rounded mr-3"></span> 交变电流的产生</h1>
+    <p class="text-gray-400 text-xs mb-5 ml-5">AC Generation Interactive Demo</p>
+    <div class="flex gap-3 mb-4">
+     <button id="btnPlay" class="btn-primary text-white px-5 py-2 rounded-lg text-sm font-medium flex-1" onclick="togglePlay()"> ▶ 演示 </button> <button class="btn-secondary text-white px-5 py-2 rounded-lg text-sm font-medium" onclick="resetScene()"> ↺ 重置 </button>
+    </div>
+    <div class="mb-5">
+     <div class="flex justify-between items-center mb-2">
+      <label class="text-gray-300 text-sm">转速调节</label> <span id="speedVal" class="text-blue-400 text-sm font-mono">1.0x</span>
+     </div><input type="range" id="speedSlider" min="0" max="5" step="0.1" value="1" class="w-full" oninput="updateSpeed(this.value)">
+    </div>
+    <div class="border-t border-gray-600/50 pt-4">
+     <p class="text-gray-400 text-xs mb-3 uppercase tracking-wider">语音讲解</p>
+     <div class="space-y-2">
+      <button class="btn-voice text-white px-4 py-2 rounded-lg text-sm w-full text-left" onclick="playVoice(1)"> 🎙 1. 原理概述 </button> <button class="btn-voice text-white px-4 py-2 rounded-lg text-sm w-full text-left" onclick="playVoice(2)"> 🎙 2. 中性面讲解 </button> <button class="btn-voice text-white px-4 py-2 rounded-lg text-sm w-full text-left" onclick="playVoice(3)"> 🎙 3. 峰值面讲解 </button>
+     </div>
+    </div>
+   </div>
+  </div><!-- Right Top Data Panel -->
+  <div class="ui-overlay" style="top: 20px; right: 20px;">
+   <div class="glass-panel p-5" style="width: 240px;">
+    <h2 class="text-gray-400 text-xs uppercase tracking-wider mb-4">实时物理量</h2>
+    <div class="mb-4">
+     <div class="flex justify-between items-center mb-1">
+      <span class="text-gray-300 text-sm">磁通量 Φ</span> <span class="text-xs text-gray-500">Wb</span>
+     </div>
+     <div id="phiValue" class="data-value text-green-400">
+      1.000
+     </div>
+     <div class="w-full h-1.5 bg-gray-700 rounded mt-2">
+      <div id="phiBar" class="h-full bg-green-500 rounded transition-all duration-100" style="width:100%"></div>
+     </div>
+    </div>
+    <div class="mb-4">
+     <div class="flex justify-between items-center mb-1">
+      <span class="text-gray-300 text-sm">电动势 E</span> <span class="text-xs text-gray-500">V</span>
+     </div>
+     <div id="emfValue" class="data-value text-yellow-400">
+      0.000
+     </div>
+     <div class="w-full h-1.5 bg-gray-700 rounded mt-2">
+      <div id="emfBar" class="h-full bg-yellow-500 rounded transition-all duration-100" style="width:0%"></div>
+     </div>
+    </div>
+    <div>
+     <div class="flex justify-between items-center mb-1">
+      <span class="text-gray-300 text-sm">转角 θ</span> <span class="text-xs text-gray-500">°</span>
+     </div>
+     <div id="thetaValue" class="data-value text-blue-400">
+      0.0°
+     </div>
+    </div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAcCAIAAACPoCp1AAAAiUlEQVR42u2TUQ6AIAxDe/9Db8bEDwHbDqN/a4gRHXuMDuSpuD0fp9P7FKCEcRpLiiA8O65IkB9TKQzsBzRf7jrJuZUALNeq0IVC8tl6nXr4iNpOhU8mHjvnwLpLmQ/ipHVPnN6zyVmuoOKEv2jFNvXth92Ls/hsYlDu95dC/qwGNKABDWjAFzoARql1FALuqE4AAAAASUVORK5CYII=" style="position: absolute; left: -99999px; top: -99999px; opacity: 0; pointer-events: none; width: 1px; height: 1px;">
+   </div>
+  </div><!-- Bottom hint -->
+  <div class="ui-overlay" style="bottom: 20px; left: 50%; transform: translateX(-50%);">
+   <div class="text-gray-500 text-xs bg-gray-900/60 px-4 py-2 rounded-full">
+    🖱 鼠标左键旋转 · 滚轮缩放 · 右键平移
+   </div>
+  </div>
+  <script>
+// ============ Global State ============
+let isPlaying = false;
+let speedMultiplier = 1.0;
+let angle = 0;
+
+// ============ UI Functions ============
+function togglePlay() {
+    isPlaying = !isPlaying;
+    document.getElementById('btnPlay').innerHTML = isPlaying ? '⏸ 暂停' : '▶ 演示';
+}
+
+function resetScene() {
+    isPlaying = false;
+    angle = 0;
+    document.getElementById('btnPlay').innerHTML = '▶ 演示';
+    if (coilGroup) coilGroup.rotation.z = 0;
+}
+
+function updateSpeed(val) {
+    speedMultiplier = parseFloat(val);
+    document.getElementById('speedVal').textContent = val + 'x';
+}
+
+function playVoice(n) {
+    const texts = {
+        1: "【原理概述】矩形线圈在匀强磁场中绕垂直于磁场方向的轴匀速旋转时，线圈中的磁通量发生周期性变化，从而产生交变电动势和交变电流。电动势 E = NBSω·sin(ωt)，磁通量 Φ = NBS·cos(ωt)。",
+        2: "【中性面讲解】当线圈平面与磁感线垂直时（θ=0°或180°），称为中性面位置。此时磁通量Φ最大，但磁通量的变化率为零，因此电动势E=0，电路中没有电流。",
+        3: "【峰值面讲解】当线圈平面与磁感线平行时（θ=90°或270°），磁通量Φ=0，但磁通量的变化率最大，电动势达到峰值 E=Em。此时线圈的AB边和CD边切割磁感线的速度最大。"
+    };
+    alert(texts[n]);
+}
+
+// ============ Three.js Scene ============
+const canvas = document.getElementById('canvas3d');
+const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0e1a);
+scene.fog = new THREE.FogExp2(0x0a0e1a, 0.015);
+
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 200);
+camera.position.set(10, 7, 10);
+camera.lookAt(0, 0, 0);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.target.set(0, 0, 0);
+
+// ============ Lighting ============
+const ambientLight = new THREE.AmbientLight(0x404060, 0.6);
+scene.add(ambientLight);
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+dirLight.position.set(8, 12, 6);
+dirLight.castShadow = true;
+scene.add(dirLight);
+
+const pointLight1 = new THREE.PointLight(0x4488ff, 0.5, 30);
+pointLight1.position.set(-5, 5, 5);
+scene.add(pointLight1);
+
+const pointLight2 = new THREE.PointLight(0xff8844, 0.3, 30);
+pointLight2.position.set(5, 3, -5);
+scene.add(pointLight2);
+
+// ============ Grid / Floor ============
+const gridHelper = new THREE.GridHelper(30, 30, 0x1a2040, 0x111830);
+gridHelper.position.y = -6;
+scene.add(gridHelper);
+
+// ============ Helper: Create Text Sprite ============
+function createTextSprite(text, color, fontSize, bgColor) {
+    const canvas2 = document.createElement('canvas');
+    const size = 128;
+    canvas2.width = size;
+    canvas2.height = size;
+    const ctx = canvas2.getContext('2d');
+
+    if (bgColor) {
+        ctx.fillStyle = bgColor;
+        ctx.beginPath();
+        ctx.arc(size/2, size/2, size/2 - 4, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    ctx.fillStyle = color || '#ffffff';
+    ctx.font = `bold ${fontSize || 64}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, size/2, size/2);
+
+    const texture = new THREE.CanvasTexture(canvas2);
+    const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
+    const sprite = new THREE.Sprite(spriteMat);
+    sprite.scale.set(0.8, 0.8, 0.8);
+    return sprite;
+}
+
+// ============ Magnets ============
+const magnetWidth = 1.5, magnetHeight = 5, magnetDepth = 5;
+
+// N pole (red) - left side (negative X)
+const nPoleGeo = new THREE.BoxGeometry(magnetWidth, magnetHeight, magnetDepth);
+const nPoleMat = new THREE.MeshPhongMaterial({ color: 0xcc2222, emissive: 0x330000, shininess: 60 });
+const nPole = new THREE.Mesh(nPoleGeo, nPoleMat);
+nPole.position.set(-5, 0, 0);
+scene.add(nPole);
+
+const nLabel = createTextSprite('N', '#ffffff', 72);
+nLabel.position.set(-5, 0, 2.8);
+nLabel.scale.set(1.2, 1.2, 1.2);
+scene.add(nLabel);
+
+// S pole (blue) - right side (positive X)
+const sPoleGeo = new THREE.BoxGeometry(magnetWidth, magnetHeight, magnetDepth);
+const sPoleMat = new THREE.MeshPhongMaterial({ color: 0x2244cc, emissive: 0x000033, shininess: 60 });
+const sPole = new THREE.Mesh(sPoleGeo, sPoleMat);
+sPole.position.set(5, 0, 0);
+scene.add(sPole);
+
+const sLabel = createTextSprite('S', '#ffffff', 72);
+sLabel.position.set(5, 0, 2.8);
+sLabel.scale.set(1.2, 1.2, 1.2);
+scene.add(sLabel);
+
+// ============ Magnetic Field Lines ============
+const fieldLineColor = 0x44cc66;
+const zLayers = [-1.5, -0.5, 0.5, 1.5];
+const yLayers = [-1.2, 0, 1.2];
+
+zLayers.forEach(z => {
+    yLayers.forEach(y => {
+        const dir = new THREE.Vector3(1, 0, 0);
+        const origin = new THREE.Vector3(-4, y, z);
+        const length = 8;
+        const arrow = new THREE.ArrowHelper(dir, origin, length, fieldLineColor, 0.5, 0.3);
+
+        // Make the line dashed
+        arrow.line.material.dispose();
+        const dashMat = new THREE.LineDashedMaterial({ color: fieldLineColor, dashSize: 0.3, gapSize: 0.15, transparent: true, opacity: 0.6 });
+        arrow.line.material = dashMat;
+        arrow.line.computeLineDistances();
+        arrow.cone.material.transparent = true;
+        arrow.cone.material.opacity = 0.7;
+
+        scene.add(arrow);
+    });
+});
+
+// ============ Coil Group ============
+const coilGroup = new THREE.Group();
+scene.add(coilGroup);
+
+// Coil dimensions
+const coilW = 2.0; // half-width in Y (up/down)
+const coilH = 1.8; // half-height in Z (front/back)
+const tubeRadius = 0.06;
+
+// Materials
+const blueCoilMat = new THREE.MeshPhongMaterial({ color: 0x3399ff, emissive: 0x112244, shininess: 80 });
+const orangeCoilMat = new THREE.MeshPhongMaterial({ color: 0xff8833, emissive: 0x442200, shininess: 80 });
+const sideCoilMat = new THREE.MeshPhongMaterial({ color: 0x888888, emissive: 0x111111, shininess: 60 });
+
+// Create tube along path
+function createTube(points, material, radius) {
+    const curve = new THREE.CatmullRomCurve3(points);
+    const geo = new THREE.TubeGeometry(curve, 16, radius || tubeRadius, 8, false);
+    return new THREE.Mesh(geo, material);
+}
+
+// AB edge (top, blue) - from A(front-top) to B(back-top)
+// A: z=+coilH, y=+coilW; B: z=-coilH, y=+coilW
+const abEdge = createTube([
+    new THREE.Vector3(0, coilW, coilH),
+    new THREE.Vector3(0, coilW, -coilH)
+], blueCoilMat);
+coilGroup.add(abEdge);
+
+// CD edge (bottom, orange) - from C(back-bottom) to D(front-bottom)
+// C: z=-coilH, y=-coilW; D: z=+coilH, y=-coilW
+const cdEdge = createTube([
+    new THREE.Vector3(0, -coilW, -coilH),
+    new THREE.Vector3(0, -coilW, coilH)
+], orangeCoilMat);
+coilGroup.add(cdEdge);
+
+// BC edge (back side) - from B(back-top) to C(back-bottom)
+const bcEdge = createTube([
+    new THREE.Vector3(0, coilW, -coilH),
+    new THREE.Vector3(0, -coilW, -coilH)
+], sideCoilMat);
+coilGroup.add(bcEdge);
+
+// DA edge (front side) - from D(front-bottom) to A(front-top)
+const daEdge = createTube([
+    new THREE.Vector3(0, -coilW, coilH),
+    new THREE.Vector3(0, coilW, coilH)
+], sideCoilMat);
+coilGroup.add(daEdge);
+
+// ============ Coil Labels (A, B, C, D) ============
+// A: front-top, B: back-top, C: back-bottom, D: front-bottom
+const labelA = createTextSprite('A', '#3399ff', 56, 'rgba(0,0,0,0.6)');
+labelA.position.set(0, coilW + 0.5, coilH + 0.3);
+labelA.scale.set(0.6, 0.6, 0.6);
+coilGroup.add(labelA);
+
+const labelB = createTextSprite('B', '#3399ff', 56, 'rgba(0,0,0,0.6)');
+labelB.position.set(0, coilW + 0.5, -coilH - 0.3);
+labelB.scale.set(0.6, 0.6, 0.6);
+coilGroup.add(labelB);
+
+const labelC = createTextSprite('C', '#ff8833', 56, 'rgba(0,0,0,0.6)');
+labelC.position.set(0, -coilW - 0.5, -coilH - 0.3);
+labelC.scale.set(0.6, 0.6, 0.6);
+coilGroup.add(labelC);
+
+const labelD = createTextSprite('D', '#ff8833', 56, 'rgba(0,0,0,0.6)');
+labelD.position.set(0, -coilW - 0.5, coilH + 0.3);
+labelD.scale.set(0.6, 0.6, 0.6);
+coilGroup.add(labelD);
+
+// ============ Rotation Axis (Z-axis shaft) ============
+const axisGeo = new THREE.CylinderGeometry(0.05, 0.05, coilH * 2 + 2, 8);
+const axisMat = new THREE.MeshPhongMaterial({ color: 0x888888, metalness: 0.8 });
+const axisMesh = new THREE.Mesh(axisGeo, axisMat);
+axisMesh.rotation.x = Math.PI / 2;
+coilGroup.add(axisMesh);
+
+// ============ Slip Rings ============
+const ringMat = new THREE.MeshPhongMaterial({ color: 0xcc8833, emissive: 0x332200, shininess: 100 });
+
+const ring1Geo = new THREE.TorusGeometry(0.25, 0.06, 12, 24);
+const ring1 = new THREE.Mesh(ring1Geo, ringMat);
+ring1.position.set(0, 0, coilH + 0.6);
+ring1.rotation.x = Math.PI / 2;
+coilGroup.add(ring1);
+
+const ring2Geo = new THREE.TorusGeometry(0.25, 0.06, 12, 24);
+const ring2 = new THREE.Mesh(ring2Geo, ringMat);
+ring2.position.set(0, 0, coilH + 1.0);
+ring2.rotation.x = Math.PI / 2;
+coilGroup.add(ring2);
+
+// Connect coil edges to rings
+const connAtoRing = createTube([
+    new THREE.Vector3(0, coilW, coilH),
+    new THREE.Vector3(0, 0.3, coilH + 0.3),
+    new THREE.Vector3(0, 0, coilH + 0.6)
+], blueCoilMat, 0.04);
+coilGroup.add(connAtoRing);
+
+const connDtoRing = createTube([
+    new THREE.Vector3(0, -coilW, coilH),
+    new THREE.Vector3(0, -0.3, coilH + 0.3),
+    new THREE.Vector3(0, 0, coilH + 1.0)
+], orangeCoilMat, 0.04);
+coilGroup.add(connDtoRing);
+
+// ============ Brushes (fixed, don't rotate) ============
+const brushGroup = new THREE.Group();
+scene.add(brushGroup);
+
+const brushMat = new THREE.MeshPhongMaterial({ color: 0x444444, emissive: 0x111111, shininess: 30 });
+
+// Brush 1
+const brush1Geo = new THREE.BoxGeometry(0.15, 0.6, 0.15);
+const brush1 = new THREE.Mesh(brush1Geo, brushMat);
+brush1.position.set(0, -0.55, coilH + 0.6);
+brushGroup.add(brush1);
+
+// Brush 2
+const brush2Geo = new THREE.BoxGeometry(0.15, 0.6, 0.15);
+const brush2 = new THREE.Mesh(brush2Geo, brushMat);
+brush2.position.set(0, -0.55, coilH + 1.0);
+brushGroup.add(brush2);
+
+// Brush supports
+const supportMat = new THREE.MeshPhongMaterial({ color: 0x666666, metalness: 0.6 });
+
+const support1Geo = new THREE.CylinderGeometry(0.04, 0.04, 1.5, 8);
+const support1 = new THREE.Mesh(support1Geo, supportMat);
+support1.position.set(0, -1.6, coilH + 0.6);
+brushGroup.add(support1);
+
+const support2Geo = new THREE.CylinderGeometry(0.04, 0.04, 1.5, 8);
+const support2 = new THREE.Mesh(support2Geo, supportMat);
+support2.position.set(0, -1.6, coilH + 1.0);
+brushGroup.add(support2);
+
+// ============ External Circuit ============
+const extCircuitGroup = new THREE.Group();
+scene.add(extCircuitGroup);
+
+const wireMat = new THREE.MeshPhongMaterial({ color: 0x888888, emissive: 0x111111 });
+const wireRadius = 0.04;
+
+// Wire paths from brushes down and forming a rectangular loop
+const extY = -2.5; // bottom level of external circuit
+const extZ1 = coilH + 0.6;
+const extZ2 = coilH + 1.0;
+const extZmid = (extZ1 + extZ2) / 2;
+
+// Wire from brush1 down
+const wire1 = createTube([
+    new THREE.Vector3(0, -2.35, extZ1),
+    new THREE.Vector3(0, extY, extZ1),
+    new THREE.Vector3(0, extY, extZ1 + 1.5)
+], wireMat, wireRadius);
+extCircuitGroup.add(wire1);
+
+// Wire from brush2 down
+const wire2 = createTube([
+    new THREE.Vector3(0, -2.35, extZ2),
+    new THREE.Vector3(0, extY, extZ2),
+    new THREE.Vector3(0, extY, extZ2 + 1.5)
+], wireMat, wireRadius);
+extCircuitGroup.add(wire2);
+
+// Bottom horizontal wires connecting to ammeter and resistor
+// Layout: brush1 -> wire down -> ammeter -> bottom wire -> resistor -> wire up -> brush2
+const bottomY = extY - 1.5;
+
+const wire3 = createTube([
+    new THREE.Vector3(0, extY, extZ1 + 1.5),
+    new THREE.Vector3(0, bottomY, extZ1 + 1.5),
+], wireMat, wireRadius);
+extCircuitGroup.add(wire3);
+
+const wire4 = createTube([
+    new THREE.Vector3(0, extY, extZ2 + 1.5),
+    new THREE.Vector3(0, bottomY, extZ2 + 1.5),
+], wireMat, wireRadius);
+extCircuitGroup.add(wire4);
+
+// Ammeter position
+const ammeterZ = extZ1 + 1.5;
+const ammeterY = bottomY;
+
+// Ammeter body
+const ammeterGeo = new THREE.CylinderGeometry(0.5, 0.5, 0.3, 32);
+const ammeterMat = new THREE.MeshPhongMaterial({ color: 0xeeeeee, emissive: 0x222222 });
+const ammeter = new THREE.Mesh(ammeterGeo, ammeterMat);
+ammeter.position.set(0, ammeterY, ammeterZ);
+ammeter.rotation.x = Math.PI / 2;
+extCircuitGroup.add(ammeter);
+
+// Ammeter face
+const ammeterFaceGeo = new THREE.CircleGeometry(0.48, 32);
+const ammeterFaceCanvas = document.createElement('canvas');
+ammeterFaceCanvas.width = 256;
+ammeterFaceCanvas.height = 256;
+const afCtx = ammeterFaceCanvas.getContext('2d');
+afCtx.fillStyle = '#f8f8f0';
+afCtx.beginPath();
+afCtx.arc(128, 128, 124, 0, Math.PI * 2);
+afCtx.fill();
+afCtx.strokeStyle = '#333';
+afCtx.lineWidth = 4;
+afCtx.stroke();
+// Draw scale marks
+for (let i = -5; i <= 5; i++) {
+    const a = Math.PI / 2 + (i / 5) * (Math.PI / 3);
+    const r1 = 100, r2 = 115;
+    afCtx.beginPath();
+    afCtx.moveTo(128 + r1 * Math.cos(a), 128 - r1 * Math.sin(a));
+    afCtx.lineTo(128 + r2 * Math.cos(a), 128 - r2 * Math.sin(a));
+    afCtx.strokeStyle = '#555';
+    afCtx.lineWidth = 2;
+    afCtx.stroke();
+}
+afCtx.fillStyle = '#333';
+afCtx.font = 'bold 32px Arial';
+afCtx.textAlign = 'center';
+afCtx.fillText('A', 128, 180);
+// Center dot
+afCtx.fillStyle = '#333';
+afCtx.beginPath();
+afCtx.arc(128, 128, 6, 0, Math.PI * 2);
+afCtx.fill();
+
+const ammeterFaceTex = new THREE.CanvasTexture(ammeterFaceCanvas);
+const ammeterFaceMat = new THREE.MeshBasicMaterial({ map: ammeterFaceTex, transparent: true });
+const ammeterFace = new THREE.Mesh(ammeterFaceGeo, ammeterFaceMat);
+ammeterFace.position.set(0, ammeterY, ammeterZ + 0.16);
+extCircuitGroup.add(ammeterFace);
+
+// Ammeter needle
+const needleGeo = new THREE.BoxGeometry(0.02, 0.4, 0.02);
+const needleMat = new THREE.MeshPhongMaterial({ color: 0xcc0000 });
+const needle = new THREE.Mesh(needleGeo, needleMat);
+needle.geometry.translate(0, 0.2, 0);
+needle.position.set(0, ammeterY, ammeterZ + 0.18);
+extCircuitGroup.add(needle);
+
+// Resistor position
+const resistorZ = extZ2 + 1.5;
+const resistorY = bottomY;
+
+// Resistor body
+const resistorGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.8, 16);
+const resistorCanvas = document.createElement('canvas');
+resistorCanvas.width = 256;
+resistorCanvas.height = 128;
+const rCtx = resistorCanvas.getContext('2d');
+rCtx.fillStyle = '#d4a574';
+rCtx.fillRect(0, 0, 256, 128);
+// Color bands
+const bands = [
+    { x: 40, color: '#cc3333' },
+    { x: 80, color: '#9933cc' },
+    { x: 120, color: '#ff8800' },
+    { x: 180, color: '#ccaa00' }
+];
+bands.forEach(b => {
+    rCtx.fillStyle = b.color;
+    rCtx.fillRect(b.x, 0, 20, 128);
+});
+
+const resistorTex = new THREE.CanvasTexture(resistorCanvas);
+const resistorMat = new THREE.MeshPhongMaterial({ map: resistorTex });
+const resistor = new THREE.Mesh(resistorGeo, resistorMat);
+resistor.position.set(0, resistorY, resistorZ);
+resistor.rotation.x = Math.PI / 2;
+extCircuitGroup.add(resistor);
+
+// Bottom connecting wire between ammeter and resistor
+const wireBottom = createTube([
+    new THREE.Vector3(0, bottomY, ammeterZ),
+    new THREE.Vector3(0, bottomY - 0.8, ammeterZ),
+    new THREE.Vector3(0, bottomY - 0.8, resistorZ),
+    new THREE.Vector3(0, bottomY, resistorZ),
+], wireMat, wireRadius);
+extCircuitGroup.add(wireBottom);
+
+// ============ Current Arrows on Coil ============
+// We'll create arrow helpers on AB and CD edges
+let currentArrowAB, currentArrowCD;
+
+const arrowLen = 1.2;
+currentArrowAB = new THREE.ArrowHelper(
+    new THREE.Vector3(0, 0, -1), // direction (will update)
+    new THREE.Vector3(0, coilW, 0), // on AB edge center
+    arrowLen,
+    0xff0000,
+    0.3, 0.15
+);
+coilGroup.add(currentArrowAB);
+
+currentArrowCD = new THREE.ArrowHelper(
+    new THREE.Vector3(0, 0, 1),
+    new THREE.Vector3(0, -coilW, 0),
+    arrowLen,
+    0xff0000,
+    0.3, 0.15
+);
+coilGroup.add(currentArrowCD);
+
+// ============ Velocity Arrows (purple) ============
+let velArrowAB, velArrowCD;
+const velColor = 0xaa44ff;
+
+velArrowAB = new THREE.ArrowHelper(
+    new THREE.Vector3(1, 0, 0),
+    new THREE.Vector3(0, coilW, 0),
+    1.0,
+    velColor,
+    0.25, 0.12
+);
+coilGroup.add(velArrowAB);
+
+velArrowCD = new THREE.ArrowHelper(
+    new THREE.Vector3(-1, 0, 0),
+    new THREE.Vector3(0, -coilW, 0),
+    1.0,
+    velColor,
+    0.25, 0.12
+);
+coilGroup.add(velArrowCD);
+
+// Velocity labels
+const vLabelAB = createTextSprite('v', '#aa44ff', 48);
+vLabelAB.scale.set(0.5, 0.5, 0.5);
+coilGroup.add(vLabelAB);
+
+const vLabelCD = createTextSprite('v', '#aa44ff', 48);
+vLabelCD.scale.set(0.5, 0.5, 0.5);
+coilGroup.add(vLabelCD);
+
+// ============ Animation Loop ============
+const clock = new THREE.Clock();
+
+function animate() {
+    requestAnimationFrame(animate);
+
+    const dt = clock.getDelta();
+
+    if (isPlaying) {
+        angle += dt * speedMultiplier * 1.5; // base angular velocity
+    }
+
+    // Coil rotation around Z axis
+    coilGroup.rotation.z = angle;
+
+    // Physics calculations
+    const emf = Math.sin(angle);
+    const phi = Math.cos(angle);
+    const absEmf = Math.abs(emf);
+
+    // Update UI
+    document.getElementById('phiValue').textContent = phi.toFixed(3);
+    document.getElementById('emfValue').textContent = emf.toFixed(3);
+    document.getElementById('thetaValue').textContent = ((angle * 180 / Math.PI) % 360).toFixed(1) + '°';
+
+    document.getElementById('phiBar').style.width = (Math.abs(phi) * 100) + '%';
+    document.getElementById('emfBar').style.width = (absEmf * 100) + '%';
+
+    // Color coding for EMF display
+    const emfEl = document.getElementById('emfValue');
+    if (emf > 0.01) {
+        emfEl.className = 'data-value text-red-400';
+    } else if (emf < -0.01) {
+        emfEl.className = 'data-value text-blue-400';
+    } else {
+        emfEl.className = 'data-value text-yellow-400';
+    }
+
+    // Update current arrows on coil
+    // Current direction depends on sign of emf
+    // AB edge: current flows from A to B (z+ to z-) when emf > 0
+    if (absEmf > 0.02) {
+        currentArrowAB.visible = true;
+        currentArrowCD.visible = true;
+
+        const currentDir = emf > 0 ? -1 : 1;
+        currentArrowAB.setDirection(new THREE.Vector3(0, 0, currentDir).normalize());
+        currentArrowCD.setDirection(new THREE.Vector3(0, 0, -currentDir).normalize());
+
+        const arrowScale = 0.3 + absEmf * 0.9;
+        currentArrowAB.setLength(arrowScale, arrowScale * 0.25, arrowScale * 0.12);
+        currentArrowCD.setLength(arrowScale, arrowScale * 0.25, arrowScale * 0.12);
+
+        // Color: red for positive, blue for negative
+        const arrowColor = emf > 0 ? 0xff3333 : 0x3388ff;
+        currentArrowAB.setColor(arrowColor);
+        currentArrowCD.setColor(arrowColor);
+    } else {
+        currentArrowAB.visible = false;
+        currentArrowCD.visible = false;
+    }
+
+    // Update velocity arrows
+    // The coil rotates around Z axis. AB is at (0, coilW, 0) in coil local coords.
+    // After rotation by angle around Z, AB center in world: 
+    //   world_pos = (coilW * (-sin(angle)), coilW * cos(angle), 0)
+    // Tangent velocity direction for point at angle θ on circle:
+    //   v_dir = (-cos(angle), -sin(angle), 0) for the top point
+    // Actually for rotation around Z axis with angular velocity ω:
+    //   position of AB center: (−coilW·sin(θ), coilW·cos(θ), 0)
+    //   velocity = ω × r = (−coilW·cos(θ), −coilW·sin(θ), 0) direction
+
+    // In LOCAL coordinates of the coil, the velocity direction needs to be expressed
+    // We compute in world coords then transform to local
+
+    const cosA = Math.cos(angle);
+    const sinA = Math.sin(angle);
+
+    // AB velocity direction in world coords: tangent to circle
+    const vAB_world = new THREE.Vector3(-cosA, -sinA, 0).normalize();
+    // CD velocity direction in world coords (opposite side of circle)
+    const vCD_world = new THREE.Vector3(cosA, sinA, 0).normalize();
+
+    // Transform to local coords (inverse rotation around Z by angle)
+    const invRot = new THREE.Matrix4().makeRotationZ(-angle);
+    const vAB_local = vAB_world.clone().applyMatrix4(invRot).normalize();
+    const vCD_local = vCD_world.clone().applyMatrix4(invRot).normalize();
+
+    velArrowAB.setDirection(vAB_local);
+    velArrowCD.setDirection(vCD_local);
+
+    // Position velocity labels
+    const vLabelOffset = 1.3;
+    vLabelAB.position.set(
+        vAB_local.x * vLabelOffset,
+        coilW + vAB_local.y * vLabelOffset,
+        vAB_local.z * vLabelOffset
+    );
+    vLabelCD.position.set(
+        vCD_local.x * vLabelOffset,
+        -coilW + vCD_local.y * vLabelOffset,
+        vCD_local.z * vLabelOffset
+    );
+
+    // Update ammeter needle
+    // Needle rotates proportional to emf, range: -60 to +60 degrees
+    const needleAngle = emf * (Math.PI / 3);
+    needle.rotation.z = needleAngle;
+
+    // Update controls
+    controls.update();
+
+    renderer.render(scene, camera);
+}
+
+// ============ Window Resize ============
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// Start animation
+animate();
+</script>
+ </body>
+</html>

@@ -1,0 +1,1130 @@
+<!doctype html>
+<html lang="zh-CN">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>交流电产生原理 - 3D互动教学</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+  </style>
+  <meta name="copyright" content="学科网（zxxk.com）版权所有">
+  <meta name="signature" content="QQABAYSQggioAIIAAAhCUwWaCAKYkAGCCIgGABAYMAAASAFABAA=">
+ </head>
+ <body class="m-0 p-0 box-border bg-[#0a0a1a] text-[#e0e0e0] overflow-hidden w-screen h-screen">
+  <div id="canvas3d" class="fixed inset-0 z-[1]"></div>
+  <div id="title-bar" class="fixed top-0 left-0 right-0 z-[100] text-center px-5 py-3 bg-gradient-to-b from-[rgba(10,10,30,0.95)] to-[rgba(10,10,30,0)] pointer-events-none">
+   <h1 class="text-xl md:text-2xl font-bold tracking-[0.25em] bg-gradient-to-r from-cyan-400 via-violet-500 to-pink-400 bg-clip-text text-transparent">⚡ 交流电产生原理</h1>
+   <p class="text-xs md:text-sm text-slate-400 mt-1">矩形线圈在匀强磁场中匀速转动产生正弦式交变电流</p>
+  </div>
+  <div id="control-panel" class="fixed top-20 left-5 z-[100] bg-[rgba(15,15,35,0.92)] border border-[rgba(100,140,255,0.25)] rounded-2xl p-5 w-[260px] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.05)]">
+   <h3 class="text-[15px] text-indigo-300 mb-4 pb-2 border-b border-[rgba(100,140,255,0.15)] flex items-center gap-2">🎛️ 控制面板</h3>
+   <div class="mb-4">
+    <label class="block text-[13px] text-slate-400 mb-1">角速度 ω <span class="float-right text-cyan-400 font-semibold text-[13px]" id="omega-display">2.0 rad/s</span></label> <input type="range" id="omega-slider" min="0.5" max="6" step="0.1" value="2.0" class="w-full h-1.5 rounded bg-gradient-to-r from-[#1a2a4a] to-[#3a5a8a] outline-none cursor-pointer accent-cyan-400">
+   </div>
+   <div class="mb-4">
+    <label class="block text-[13px] text-slate-400 mb-1">磁感应强度 B <span class="float-right text-cyan-400 font-semibold text-[13px]" id="b-display">1.0 T</span></label> <input type="range" id="b-slider" min="0.3" max="2.0" step="0.1" value="1.0" class="w-full h-1.5 rounded bg-gradient-to-r from-[#1a2a4a] to-[#3a5a8a] outline-none cursor-pointer accent-cyan-400">
+   </div>
+   <div class="flex gap-2 mt-3">
+    <button class="flex-1 px-3 py-2 border border-[rgba(100,140,255,0.3)] rounded-xl bg-[rgba(30,40,70,0.8)] text-[13px] text-slate-200 transition-all duration-300 hover:bg-[rgba(50,70,120,0.9)] hover:border-[rgba(100,180,255,0.5)] hover:shadow-[0_0_12px_rgba(0,150,255,0.2)] active" id="btn-play"> <span class="block text-base mb-0.5">⏸</span>暂停 </button> <button class="flex-1 px-3 py-2 border border-[rgba(100,140,255,0.3)] rounded-xl bg-[rgba(30,40,70,0.8)] text-[13px] text-slate-200 transition-all duration-300 hover:bg-[rgba(50,70,120,0.9)] hover:border-[rgba(100,180,255,0.5)] hover:shadow-[0_0_12px_rgba(0,150,255,0.2)]" id="btn-reset"> <span class="block text-base mb-0.5">↺</span>重置 </button>
+   </div>
+   <div class="flex gap-2 mt-3">
+    <button class="flex-1 px-3 py-2 border border-[rgba(100,140,255,0.3)] rounded-xl bg-[rgba(30,40,70,0.8)] text-[13px] text-slate-200 transition-all duration-300 hover:bg-[rgba(50,70,120,0.9)] hover:border-[rgba(100,180,255,0.5)] hover:shadow-[0_0_12px_rgba(0,150,255,0.2)]" id="btn-speech"> <span class="block text-base mb-0.5">🔊</span>语音讲解 </button>
+   </div>
+   <div class="flex gap-2 mt-3">
+    <button class="flex-1 px-3 py-2 border border-[rgba(100,140,255,0.3)] rounded-xl bg-[rgba(30,40,70,0.8)] text-[13px] text-slate-200 transition-all duration-300 hover:bg-[rgba(50,70,120,0.9)] hover:border-[rgba(100,180,255,0.5)] hover:shadow-[0_0_12px_rgba(0,150,255,0.2)]" id="btn-view"> <span class="block text-base mb-0.5">👁</span>切换视角 </button>
+   </div>
+  </div>
+  <div id="info-panel" class="fixed top-20 right-5 z-[100] bg-[rgba(15,15,35,0.92)] border border-[rgba(100,140,255,0.25)] rounded-2xl px-5 py-4 w-[220px] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+   <h3 class="text-[15px] text-indigo-300 mb-3 pb-2 border-b border-[rgba(100,140,255,0.15)]">📊 实时数据</h3>
+   <div class="flex justify-between items-center mb-2.5 text-[13px]">
+    <span class="text-slate-400">转角 θ</span> <span class="text-cyan-400 font-semibold font-mono" id="val-theta">0.0°</span>
+   </div>
+   <div class="flex justify-between items-center mb-2.5 text-[13px]">
+    <span class="text-slate-400">磁通量 Φ</span> <span class="text-cyan-400 font-semibold font-mono" id="val-phi">0.000 Wb</span>
+   </div>
+   <div class="flex justify-between items-center mb-2.5 text-[13px]">
+    <span class="text-slate-400">电动势 e</span> <span class="text-cyan-400 font-semibold font-mono" id="val-emf">2.000 V</span>
+   </div>
+   <div class="flex justify-between items-center mb-2.5 text-[13px]">
+    <span class="text-slate-400">电流方向</span> <span class="text-cyan-400 font-semibold font-mono" id="val-direction">正向 →</span>
+   </div>
+   <div class="flex justify-between items-center mb-2.5 text-[13px]">
+    <span class="text-slate-400">位置</span> <span class="text-cyan-400 font-semibold font-mono" id="val-position">平行面</span>
+   </div>
+  </div>
+  <div id="charts-container" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[100] flex flex-col xl:flex-row gap-4 max-w-[calc(100vw-40px)]">
+   <div class="bg-[rgba(15,15,35,0.92)] border border-[rgba(100,140,255,0.25)] rounded-2xl px-4 py-3 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+    <h4 class="text-[13px] text-indigo-300 mb-2 text-center">磁通量 Φ - 时间 t</h4>
+    <canvas id="chart-phi" width="360" height="130" class="block rounded-md max-w-full"></canvas>
+   </div>
+   <div class="bg-[rgba(15,15,35,0.92)] border border-[rgba(100,140,255,0.25)] rounded-2xl px-4 py-3 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+    <h4 class="text-[13px] text-indigo-300 mb-2 text-center">感应电动势 e - 时间 t</h4>
+    <canvas id="chart-emf" width="360" height="130" class="block rounded-md max-w-full"></canvas>
+   </div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAjCAIAAABzZz93AAAAsUlEQVR4nO2U6w6DMAiFOZvvbd+8LppulIvaxmR/DjEGCPAViqLWKvJ50N4SmdLrojwD8i5lHc1J2NKOmHo07P5J9QDCXF8KB6zsGpoLyjxJ9rU82GYdnelmEV0MnCdDZgGQqTHemlgoXxj6rcuK6rDHttEgzZzR60juzJq6s4wXmjOyNMV/HxnPrI/fLBP2K4L9D3IpJ4ABWa5DgqKTI33NpRFGGGGEEUYYYYQR9n/YBo4fKHWHYzyrAAAAAElFTkSuQmCC" style="position: absolute; left: -99999px; top: -99999px; opacity: 0; pointer-events: none; width: 1px; height: 1px;">
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.min.js"></script>
+  <script>
+    let scene
+    let camera
+    let renderer
+    let clock
+
+    let isPlaying = true
+    let omega = 2.0
+    let B = 1.0
+    let S = 1.0
+    let angle = 0
+    let totalTime = 0
+    let audioElement = null
+
+    let coilGroup
+    let slipRingGroup
+    let ammeterNeedle
+    let currentParticles = []
+    let magneticFieldLines = []
+
+    let phiData = []
+    let emfData = []
+    const MAX_DATA_POINTS = 400
+
+    let ammeterGroup
+    let externalWires = []
+
+    let viewIndex = 0
+
+    const viewPositions = [
+      { x: 8, y: 6, z: 10 },
+      { x: 0, y: 12, z: 0.1 },
+      { x: 14, y: 2, z: 0 },
+      { x: 0, y: 3, z: 14 },
+      { x: -10, y: 4, z: 8 }
+    ]
+
+    function initThree() {
+      scene = new THREE.Scene()
+      scene.background = new THREE.Color(0x0a0a1a)
+      scene.fog = new THREE.FogExp2(0x0a0a1a, 0.015)
+
+      camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 200)
+      camera.position.set(8, 6, 10)
+      camera.lookAt(0, 0, 0)
+
+      renderer = new THREE.WebGLRenderer({ antialias: true })
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+      renderer.shadowMap.enabled = true
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap
+      document.getElementById("canvas3d").appendChild(renderer.domElement)
+
+      clock = new THREE.Clock()
+
+      const ambientLight = new THREE.AmbientLight(0x334466, 0.6)
+      scene.add(ambientLight)
+
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.8)
+      dirLight.position.set(5, 10, 5)
+      dirLight.castShadow = true
+      scene.add(dirLight)
+
+      const pointLight1 = new THREE.PointLight(0x4488ff, 0.5, 30)
+      pointLight1.position.set(-5, 5, 5)
+      scene.add(pointLight1)
+
+      const pointLight2 = new THREE.PointLight(0xff4488, 0.3, 30)
+      pointLight2.position.set(5, 5, -5)
+      scene.add(pointLight2)
+
+      const gridHelper = new THREE.GridHelper(30, 30, 0x1a2a4a, 0x0d1525)
+      gridHelper.position.y = -4
+      scene.add(gridHelper)
+
+      buildMagnets()
+      buildMagneticFieldLines()
+      buildCoil()
+      buildSlipRingsAndBrushes()
+      buildExternalCircuit()
+      buildAmmeter()
+      buildCurrentParticles()
+      buildAxisIndicator()
+
+      window.addEventListener("resize", onWindowResize)
+
+      let isDragging = false
+      let prevMouse = { x: 0, y: 0 }
+      let cameraAngleH = Math.atan2(camera.position.x, camera.position.z)
+      let cameraAngleV = 0.5
+      let cameraRadius = 14
+
+      renderer.domElement.addEventListener("mousedown", function(e) {
+        isDragging = true
+        prevMouse = { x: e.clientX, y: e.clientY }
+      })
+
+      renderer.domElement.addEventListener("mousemove", function(e) {
+        if (!isDragging) {
+          return
+        }
+
+        const dx = e.clientX - prevMouse.x
+        const dy = e.clientY - prevMouse.y
+
+        cameraAngleH += dx * 0.005
+        cameraAngleV = Math.max(-1.2, Math.min(1.2, cameraAngleV + dy * 0.005))
+        prevMouse = { x: e.clientX, y: e.clientY }
+
+        updateCameraPosition()
+      })
+
+      renderer.domElement.addEventListener("mouseup", function() {
+        isDragging = false
+      })
+
+      renderer.domElement.addEventListener("mouseleave", function() {
+        isDragging = false
+      })
+
+      renderer.domElement.addEventListener("wheel", function(e) {
+        cameraRadius = Math.max(6, Math.min(30, cameraRadius + e.deltaY * 0.01))
+        updateCameraPosition()
+      })
+
+      function updateCameraPosition() {
+        camera.position.x = cameraRadius * Math.sin(cameraAngleH) * Math.cos(cameraAngleV)
+        camera.position.y = cameraRadius * Math.sin(cameraAngleV) + 2
+        camera.position.z = cameraRadius * Math.cos(cameraAngleH) * Math.cos(cameraAngleV)
+        camera.lookAt(0, 0, 0)
+      }
+
+      resizeCharts()
+    }
+
+    function buildMagnets() {
+      const nPoleGeo = new THREE.BoxGeometry(1.2, 3.5, 3.5)
+
+      const nPoleMat = new THREE.MeshPhongMaterial({
+        color: 0xcc2222,
+        emissive: 0x441111,
+        shininess: 60
+      })
+
+      const nPole = new THREE.Mesh(nPoleGeo, nPoleMat)
+      nPole.position.set(-4.5, 0, 0)
+      scene.add(nPole)
+
+      const nCanvas = createTextCanvas("N", "#ff4444", 128)
+      const nTexture = new THREE.CanvasTexture(nCanvas)
+      const nLabel = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.5, 1.5),
+        new THREE.MeshBasicMaterial({ map: nTexture, transparent: true })
+      )
+      nLabel.position.set(-5.15, 0, 0)
+      nLabel.rotation.y = -Math.PI / 2
+      scene.add(nLabel)
+
+      const nLabelInner = nLabel.clone()
+      nLabelInner.position.set(-3.85, 0, 0)
+      nLabelInner.rotation.y = Math.PI / 2
+      scene.add(nLabelInner)
+
+      const sPoleMat = new THREE.MeshPhongMaterial({
+        color: 0x2244cc,
+        emissive: 0x111144,
+        shininess: 60
+      })
+
+      const sPole = new THREE.Mesh(nPoleGeo.clone(), sPoleMat)
+      sPole.position.set(4.5, 0, 0)
+      scene.add(sPole)
+
+      const sCanvas = createTextCanvas("S", "#4488ff", 128)
+      const sTexture = new THREE.CanvasTexture(sCanvas)
+      const sLabel = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.5, 1.5),
+        new THREE.MeshBasicMaterial({ map: sTexture, transparent: true })
+      )
+      sLabel.position.set(5.15, 0, 0)
+      sLabel.rotation.y = Math.PI / 2
+      scene.add(sLabel)
+
+      const sLabelInner = sLabel.clone()
+      sLabelInner.position.set(3.85, 0, 0)
+      sLabelInner.rotation.y = -Math.PI / 2
+      scene.add(sLabelInner)
+
+      const yokeGeo = new THREE.BoxGeometry(10.2, 0.6, 3.5)
+      const yokeMat = new THREE.MeshPhongMaterial({ color: 0x555555, emissive: 0x111111 })
+
+      const yokeTop = new THREE.Mesh(yokeGeo, yokeMat)
+      yokeTop.position.set(0, 2.3, 0)
+      scene.add(yokeTop)
+
+      const yokeBottom = new THREE.Mesh(yokeGeo.clone(), yokeMat)
+      yokeBottom.position.set(0, -2.3, 0)
+      scene.add(yokeBottom)
+    }
+
+    function buildMagneticFieldLines() {
+      const lineMat = new THREE.LineBasicMaterial({
+        color: 0x44aaff,
+        transparent: true,
+        opacity: 0.25
+      })
+
+      for (let j = -1; j <= 1; j += 0.5) {
+        for (let k = -1; k <= 1; k += 0.5) {
+          const points = []
+          points.push(new THREE.Vector3(-3.8, j * 1.2, k * 1.2))
+          points.push(new THREE.Vector3(3.8, j * 1.2, k * 1.2))
+
+          const geo = new THREE.BufferGeometry().setFromPoints(points)
+          const line = new THREE.Line(geo, lineMat)
+
+          scene.add(line)
+          magneticFieldLines.push(line)
+        }
+      }
+
+      for (let j = -1; j <= 1; j++) {
+        for (let k = -1; k <= 1; k++) {
+          const arrowGeo = new THREE.ConeGeometry(0.12, 0.3, 6)
+          const arrowMat = new THREE.MeshBasicMaterial({
+            color: 0x44aaff,
+            transparent: true,
+            opacity: 0.4
+          })
+
+          const arrow = new THREE.Mesh(arrowGeo, arrowMat)
+          arrow.position.set(0, j * 1.2, k * 1.2)
+          arrow.rotation.z = -Math.PI / 2
+          scene.add(arrow)
+        }
+      }
+    }
+
+    function buildCoil() {
+      coilGroup = new THREE.Group()
+
+      const coilMat = new THREE.MeshPhongMaterial({
+        color: 0xffaa00,
+        emissive: 0x553300,
+        shininess: 80
+      })
+
+      const tubeRadius = 0.08
+      const coilW = 2.8
+      const coilH = 1.4
+
+      const topBar = new THREE.Mesh(
+        new THREE.CylinderGeometry(tubeRadius, tubeRadius, coilW * 2, 8),
+        coilMat
+      )
+      topBar.rotation.z = Math.PI / 2
+      topBar.position.set(0, coilH, 0)
+      coilGroup.add(topBar)
+
+      const bottomBar = new THREE.Mesh(
+        new THREE.CylinderGeometry(tubeRadius, tubeRadius, coilW * 2, 8),
+        coilMat
+      )
+      bottomBar.rotation.z = Math.PI / 2
+      bottomBar.position.set(0, -coilH, 0)
+      coilGroup.add(bottomBar)
+
+      const leftBar = new THREE.Mesh(
+        new THREE.CylinderGeometry(tubeRadius, tubeRadius, coilH * 2, 8),
+        coilMat
+      )
+      leftBar.position.set(-coilW, 0, 0)
+      coilGroup.add(leftBar)
+
+      const rightBar = new THREE.Mesh(
+        new THREE.CylinderGeometry(tubeRadius, tubeRadius, coilH * 2, 8),
+        coilMat
+      )
+      rightBar.position.set(coilW, 0, 0)
+      coilGroup.add(rightBar)
+
+      const faceMat = new THREE.MeshPhongMaterial({
+        color: 0xffaa00,
+        transparent: true,
+        opacity: 0.08,
+        side: THREE.DoubleSide
+      })
+
+      const face = new THREE.Mesh(
+        new THREE.PlaneGeometry(coilW * 2, coilH * 2),
+        faceMat
+      )
+      coilGroup.add(face)
+
+      const normalArrow = new THREE.Group()
+
+      const shaft = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.03, 0.03, 1.2, 6),
+        new THREE.MeshBasicMaterial({ color: 0x00ff88 })
+      )
+      shaft.position.z = 0.6
+      shaft.rotation.x = Math.PI / 2
+      normalArrow.add(shaft)
+
+      const tip = new THREE.Mesh(
+        new THREE.ConeGeometry(0.1, 0.25, 6),
+        new THREE.MeshBasicMaterial({ color: 0x00ff88 })
+      )
+      tip.position.z = 1.3
+      tip.rotation.x = Math.PI / 2
+      normalArrow.add(tip)
+
+      coilGroup.add(normalArrow)
+
+      const axisMat = new THREE.MeshPhongMaterial({ color: 0x888888, emissive: 0x222222 })
+
+      const axisTop = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.1, 0.1, 1.2, 12),
+        axisMat
+      )
+      axisTop.position.set(0, coilH + 0.6, 0)
+      coilGroup.add(axisTop)
+
+      const axisBottom = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.1, 0.1, 1.2, 12),
+        axisMat
+      )
+      axisBottom.position.set(0, -(coilH + 0.6), 0)
+      coilGroup.add(axisBottom)
+
+      scene.add(coilGroup)
+    }
+
+    function buildSlipRingsAndBrushes() {
+      slipRingGroup = new THREE.Group()
+
+      const ringMat = new THREE.MeshPhongMaterial({
+        color: 0xccaa44,
+        emissive: 0x332200,
+        shininess: 100
+      })
+
+      const ring1 = new THREE.Mesh(
+        new THREE.TorusGeometry(0.3, 0.06, 8, 24),
+        ringMat
+      )
+      ring1.position.set(0, -2.2, 0)
+      ring1.rotation.x = Math.PI / 2
+      coilGroup.add(ring1)
+
+      const ring2 = new THREE.Mesh(
+        new THREE.TorusGeometry(0.22, 0.06, 8, 24),
+        ringMat
+      )
+      ring2.position.set(0, -2.5, 0)
+      ring2.rotation.x = Math.PI / 2
+      coilGroup.add(ring2)
+
+      const brushMat = new THREE.MeshPhongMaterial({ color: 0x444444, emissive: 0x111111 })
+
+      const brush1 = new THREE.Mesh(
+        new THREE.BoxGeometry(0.15, 0.3, 0.6),
+        brushMat
+      )
+      brush1.position.set(0.5, -2.2, 0)
+      scene.add(brush1)
+
+      const brush2 = new THREE.Mesh(
+        new THREE.BoxGeometry(0.15, 0.3, 0.6),
+        brushMat
+      )
+      brush2.position.set(0.5, -2.5, 0)
+      scene.add(brush2)
+
+      const bracketMat = new THREE.MeshPhongMaterial({ color: 0x555555 })
+
+      const bracket = new THREE.Mesh(
+        new THREE.BoxGeometry(0.1, 1.0, 0.1),
+        bracketMat
+      )
+      bracket.position.set(0.55, -2.35, 0)
+      scene.add(bracket)
+    }
+
+    function buildExternalCircuit() {
+      const wireMat = new THREE.MeshPhongMaterial({ color: 0x66aaff, emissive: 0x112244 })
+      const wireRadius = 0.04
+
+      const wire1 = new THREE.Mesh(
+        new THREE.CylinderGeometry(wireRadius, wireRadius, 1.0, 8),
+        wireMat
+      )
+      wire1.position.set(0.5, -3.0, 0)
+      scene.add(wire1)
+      externalWires.push(wire1)
+
+      const wire2 = new THREE.Mesh(
+        new THREE.CylinderGeometry(wireRadius, wireRadius, 2.5, 8),
+        wireMat
+      )
+      wire2.rotation.z = Math.PI / 2
+      wire2.position.set(-0.75, -3.5, 0)
+      scene.add(wire2)
+      externalWires.push(wire2)
+
+      const wire3 = new THREE.Mesh(
+        new THREE.CylinderGeometry(wireRadius, wireRadius, 2.5, 8),
+        wireMat
+      )
+      wire3.rotation.z = Math.PI / 2
+      wire3.position.set(-0.75, -3.5, 0.8)
+      scene.add(wire3)
+
+      const wire4 = new THREE.Mesh(
+        new THREE.CylinderGeometry(wireRadius, wireRadius, 0.8, 8),
+        wireMat
+      )
+      wire4.position.set(-2.0, -3.5, 0.4)
+      wire4.rotation.x = Math.PI / 2
+      scene.add(wire4)
+
+      const wire5 = new THREE.Mesh(
+        new THREE.CylinderGeometry(wireRadius, wireRadius, 0.8, 8),
+        wireMat
+      )
+      wire5.position.set(0.5, -3.5, 0.4)
+      wire5.rotation.x = Math.PI / 2
+      scene.add(wire5)
+
+      const wire6 = new THREE.Mesh(
+        new THREE.CylinderGeometry(wireRadius, wireRadius, 1.5, 8),
+        wireMat
+      )
+      wire6.position.set(-2.0, -2.75, 0.8)
+      scene.add(wire6)
+
+      const wire7 = new THREE.Mesh(
+        new THREE.CylinderGeometry(wireRadius, wireRadius, 2.5, 8),
+        wireMat
+      )
+      wire7.rotation.z = Math.PI / 2
+      wire7.position.set(-0.75, -2.0, 0.8)
+      scene.add(wire7)
+
+      const wire8 = new THREE.Mesh(
+        new THREE.CylinderGeometry(wireRadius, wireRadius, 0.8, 8),
+        wireMat
+      )
+      wire8.position.set(0.5, -2.0, 0.4)
+      wire8.rotation.x = Math.PI / 2
+      scene.add(wire8)
+
+      const resistorMat = new THREE.MeshPhongMaterial({ color: 0xaa6633, emissive: 0x331100 })
+
+      const resistor = new THREE.Mesh(
+        new THREE.BoxGeometry(0.6, 0.3, 0.3),
+        resistorMat
+      )
+      resistor.position.set(-2.0, -2.0, 0.8)
+      scene.add(resistor)
+
+      const rCanvas = createTextCanvas("R", "#ffaa66", 64)
+      const rTexture = new THREE.CanvasTexture(rCanvas)
+      const rLabel = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.4, 0.4),
+        new THREE.MeshBasicMaterial({ map: rTexture, transparent: true })
+      )
+      rLabel.position.set(-2.0, -1.7, 0.8)
+      scene.add(rLabel)
+    }
+
+    function buildAmmeter() {
+      ammeterGroup = new THREE.Group()
+
+      const dialMat = new THREE.MeshPhongMaterial({ color: 0x222233, emissive: 0x0a0a15 })
+
+      const dial = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.6, 0.6, 0.15, 32),
+        dialMat
+      )
+      dial.rotation.x = Math.PI / 2
+      ammeterGroup.add(dial)
+
+      const faceCanvas = createAmmeterFace()
+      const faceTexture = new THREE.CanvasTexture(faceCanvas)
+
+      const faceMesh = new THREE.Mesh(
+        new THREE.CircleGeometry(0.55, 32),
+        new THREE.MeshBasicMaterial({ map: faceTexture })
+      )
+      faceMesh.position.z = 0.08
+      ammeterGroup.add(faceMesh)
+
+      const frameMat = new THREE.MeshPhongMaterial({ color: 0x888888, emissive: 0x222222 })
+
+      const frame = new THREE.Mesh(
+        new THREE.TorusGeometry(0.6, 0.05, 8, 32),
+        frameMat
+      )
+      frame.position.z = 0.05
+      ammeterGroup.add(frame)
+
+      const needleMat = new THREE.MeshBasicMaterial({ color: 0xff3333 })
+
+      ammeterNeedle = new THREE.Mesh(
+        new THREE.BoxGeometry(0.02, 0.45, 0.02),
+        needleMat
+      )
+      ammeterNeedle.position.set(0, 0.15, 0.12)
+      ammeterNeedle.geometry.translate(0, -0.05, 0)
+      ammeterGroup.add(ammeterNeedle)
+
+      const center = new THREE.Mesh(
+        new THREE.SphereGeometry(0.04, 12, 12),
+        new THREE.MeshBasicMaterial({ color: 0xff3333 })
+      )
+      center.position.z = 0.12
+      ammeterGroup.add(center)
+
+      ammeterGroup.position.set(-0.2, -3.5, 0.4)
+      ammeterGroup.rotation.x = -Math.PI * 0.3
+      scene.add(ammeterGroup)
+    }
+
+    function createAmmeterFace() {
+      const canvas = document.createElement("canvas")
+      canvas.width = 256
+      canvas.height = 256
+
+      const ctx = canvas.getContext("2d")
+
+      ctx.fillStyle = "#1a1a2e"
+      ctx.beginPath()
+      ctx.arc(128, 128, 128, 0, Math.PI * 2)
+      ctx.fill()
+
+      ctx.strokeStyle = "#aaaacc"
+      ctx.lineWidth = 1
+
+      for (let i = -5; i <= 5; i++) {
+        const a = Math.PI * 0.75 + (i + 5) / 10 * Math.PI * 0.5
+        const r1 = i % 5 === 0 ? 85 : 95
+        const r2 = 105
+
+        ctx.beginPath()
+        ctx.moveTo(128 + r1 * Math.cos(a), 128 - r1 * Math.sin(a))
+        ctx.lineTo(128 + r2 * Math.cos(a), 128 - r2 * Math.sin(a))
+        ctx.stroke()
+      }
+
+      ctx.fillStyle = "#8899bb"
+      ctx.font = "18px Arial"
+      ctx.textAlign = "center"
+      ctx.fillText("-", 55, 100)
+      ctx.fillText("0", 128, 55)
+      ctx.fillText("+", 200, 100)
+
+      ctx.fillStyle = "#5577aa"
+      ctx.font = "14px Arial"
+      ctx.fillText("A", 128, 170)
+
+      return canvas
+    }
+
+    function buildCurrentParticles() {
+      const particleMat = new THREE.MeshBasicMaterial({ color: 0x00ffaa })
+
+      for (let i = 0; i < 30; i++) {
+        const particle = new THREE.Mesh(
+          new THREE.SphereGeometry(0.06, 6, 6),
+          particleMat.clone()
+        )
+        particle.visible = false
+        scene.add(particle)
+
+        currentParticles.push({
+          mesh: particle,
+          t: i / 30,
+          speed: 1
+        })
+      }
+    }
+
+    function getCircuitPoint(t) {
+      const path = [
+        { x: 0.5, y: -2.2, z: 0 },
+        { x: 0.5, y: -3.5, z: 0 },
+        { x: -2.0, y: -3.5, z: 0 },
+        { x: -2.0, y: -3.5, z: 0.8 },
+        { x: -2.0, y: -2.0, z: 0.8 },
+        { x: 0.5, y: -2.0, z: 0.8 },
+        { x: 0.5, y: -2.0, z: 0 },
+        { x: 0.5, y: -2.5, z: 0 }
+      ]
+
+      const totalSegments = path.length
+      const scaledT = ((t % 1) + 1) % 1
+      const segIndex = Math.floor(scaledT * totalSegments) % totalSegments
+      const segT = scaledT * totalSegments - segIndex
+      const p1 = path[segIndex]
+      const p2 = path[(segIndex + 1) % totalSegments]
+
+      return {
+        x: p1.x + (p2.x - p1.x) * segT,
+        y: p1.y + (p2.y - p1.y) * segT,
+        z: p1.z + (p2.z - p1.z) * segT
+      }
+    }
+
+    function buildAxisIndicator() {
+      const axisMat = new THREE.LineDashedMaterial({
+        color: 0x44ff88,
+        dashSize: 0.2,
+        gapSize: 0.1,
+        transparent: true,
+        opacity: 0.4
+      })
+
+      const axisPoints = [
+        new THREE.Vector3(0, -3.5, 0),
+        new THREE.Vector3(0, 3.5, 0)
+      ]
+
+      const axisGeo = new THREE.BufferGeometry().setFromPoints(axisPoints)
+      const axisLine = new THREE.Line(axisGeo, axisMat)
+      axisLine.computeLineDistances()
+      scene.add(axisLine)
+
+      const bCanvas = createTextCanvas("B →", "#4488ff", 128)
+      const bTexture = new THREE.CanvasTexture(bCanvas)
+
+      const bLabel = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.5, 0.6),
+        new THREE.MeshBasicMaterial({ map: bTexture, transparent: true })
+      )
+      bLabel.position.set(0, 2.8, 2)
+      scene.add(bLabel)
+    }
+
+    function createTextCanvas(text, color, size) {
+      const canvas = document.createElement("canvas")
+      canvas.width = size
+      canvas.height = size
+
+      const ctx = canvas.getContext("2d")
+      ctx.fillStyle = color
+      ctx.font = "bold " + size * 0.6 + "px Arial"
+      ctx.textAlign = "center"
+      ctx.textBaseline = "middle"
+      ctx.fillText(text, size / 2, size / 2)
+
+      return canvas
+    }
+
+    function getPhiValue(currentAngle) {
+      return B * S * Math.sin(currentAngle)
+    }
+
+    function getEmfValue(currentAngle) {
+      return -B * S * omega * Math.cos(currentAngle)
+    }
+
+    function animate() {
+      requestAnimationFrame(animate)
+
+      const delta = clock.getDelta()
+
+      if (isPlaying) {
+        angle += omega * delta
+        totalTime += delta
+
+        coilGroup.rotation.y = angle
+
+        const phi = getPhiValue(angle)
+        const emf = getEmfValue(angle)
+
+        const maxEmf = B * S * omega + 0.001
+        const needleAngle = emf / maxEmf * 0.6
+        ammeterNeedle.rotation.z = -needleAngle
+
+        const currentDirection = emf
+        const currentMagnitude = Math.abs(currentDirection) / maxEmf
+
+        currentParticles.forEach(function(p) {
+          if (currentMagnitude > 0.05) {
+            p.mesh.visible = true
+
+            const dir = currentDirection > 0 ? 1 : -1
+            p.t += dir * delta * omega * 0.15
+            p.t = ((p.t % 1) + 1) % 1
+
+            const pos = getCircuitPoint(p.t)
+            p.mesh.position.set(pos.x, pos.y, pos.z)
+
+            const brightness = currentMagnitude
+            p.mesh.material.color.setRGB(0, brightness, brightness * 0.6)
+            p.mesh.scale.setScalar(0.5 + brightness * 0.8)
+          } else {
+            p.mesh.visible = false
+          }
+        })
+
+        phiData.push(phi)
+        emfData.push(emf)
+
+        if (phiData.length > MAX_DATA_POINTS) {
+          phiData.shift()
+          emfData.shift()
+        }
+
+        updateInfoPanel(angle, phi, emf)
+      }
+
+      const pulse = 0.2 + 0.1 * Math.sin(totalTime * 2)
+      magneticFieldLines.forEach(function(line) {
+        line.material.opacity = pulse
+      })
+
+      renderer.render(scene, camera)
+      drawCharts()
+    }
+
+    function updateInfoPanel(ang, phi, emf) {
+      const degrees = ((ang * 180 / Math.PI) % 360 + 360) % 360
+
+      document.getElementById("val-theta").textContent = degrees.toFixed(1) + "°"
+      document.getElementById("val-phi").textContent = phi.toFixed(3) + " Wb"
+      document.getElementById("val-emf").textContent = emf.toFixed(3) + " V"
+
+      if (Math.abs(emf) < 0.05 * (B * S * omega || 1)) {
+        document.getElementById("val-direction").textContent = "换向中"
+        document.getElementById("val-direction").style.color = "#ffaa00"
+      } else if (emf > 0) {
+        document.getElementById("val-direction").textContent = "正向 →"
+        document.getElementById("val-direction").style.color = "#00ff88"
+      } else {
+        document.getElementById("val-direction").textContent = "← 反向"
+        document.getElementById("val-direction").style.color = "#ff6688"
+      }
+
+      const normDeg = degrees % 360
+      const distTo90 = Math.min(Math.abs(normDeg - 90), Math.abs(normDeg - 270))
+      const distTo0 = Math.min(normDeg, Math.abs(normDeg - 180), Math.abs(normDeg - 360))
+
+      if (distTo90 < 5) {
+        document.getElementById("val-position").textContent = "中性面"
+        document.getElementById("val-position").style.color = "#ffaa00"
+      } else if (distTo0 < 5) {
+        document.getElementById("val-position").textContent = "平行面"
+        document.getElementById("val-position").style.color = "#ff4488"
+      } else {
+        document.getElementById("val-position").textContent = "旋转中"
+        document.getElementById("val-position").style.color = "#00d4ff"
+      }
+    }
+
+    function drawCharts() {
+      drawChart("chart-phi", phiData, "#00d4ff", "#0066aa", "Φ", B * S)
+      drawChart("chart-emf", emfData, "#ff6b9d", "#aa2255", "e", B * S * omega)
+    }
+
+    function drawChart(canvasId, data, color, bgColor, label, maxVal) {
+      const canvas = document.getElementById(canvasId)
+      const ctx = canvas.getContext("2d")
+      const w = canvas.width
+      const h = canvas.height
+
+      ctx.clearRect(0, 0, w, h)
+      ctx.fillStyle = "rgba(10, 12, 25, 0.95)"
+      ctx.fillRect(0, 0, w, h)
+
+      ctx.strokeStyle = "rgba(100, 130, 180, 0.4)"
+      ctx.lineWidth = 0.5
+      const midY = h / 2
+
+      ctx.beginPath()
+      ctx.moveTo(0, midY)
+      ctx.lineTo(w, midY)
+      ctx.stroke()
+
+      ctx.strokeStyle = "rgba(50, 70, 100, 0.2)"
+      for (let i = 1; i < 4; i++) {
+        ctx.beginPath()
+        ctx.moveTo(0, midY - i * h / 8)
+        ctx.lineTo(w, midY - i * h / 8)
+        ctx.stroke()
+
+        ctx.beginPath()
+        ctx.moveTo(0, midY + i * h / 8)
+        ctx.lineTo(w, midY + i * h / 8)
+        ctx.stroke()
+      }
+
+      for (let i = 0; i < w; i += Math.max(28, Math.floor(w / 9))) {
+        ctx.beginPath()
+        ctx.moveTo(i, 0)
+        ctx.lineTo(i, h)
+        ctx.stroke()
+      }
+
+      if (data.length < 2) {
+        return
+      }
+
+      const amplitude = Math.max(maxVal || 1, 0.001)
+      const leftPad = 8
+      const rightPad = 8
+      const usableW = Math.max(10, w - leftPad - rightPad)
+      const scaleY = (h / 2 - 15) / amplitude
+
+      ctx.beginPath()
+      ctx.moveTo(leftPad, midY)
+
+      for (let i = 0; i < data.length; i++) {
+        const ratio = data.length > 1 ? i / (data.length - 1) : 0
+        const x = leftPad + ratio * usableW
+        const y = midY - data[i] * scaleY
+        ctx.lineTo(x, y)
+      }
+
+      const lastFillX = leftPad + usableW
+      ctx.lineTo(lastFillX, midY)
+      ctx.closePath()
+      ctx.fillStyle = bgColor + "22"
+      ctx.fill()
+
+      ctx.beginPath()
+      ctx.strokeStyle = color
+      ctx.lineWidth = 2
+      ctx.shadowColor = color
+      ctx.shadowBlur = 6
+
+      for (let i = 0; i < data.length; i++) {
+        const ratio = data.length > 1 ? i / (data.length - 1) : 0
+        const x = leftPad + ratio * usableW
+        const y = midY - data[i] * scaleY
+
+        if (i === 0) {
+          ctx.moveTo(x, y)
+        } else {
+          ctx.lineTo(x, y)
+        }
+      }
+
+      ctx.stroke()
+      ctx.shadowBlur = 0
+
+      if (data.length > 0) {
+        const cx = leftPad + usableW
+        const cy = midY - data[data.length - 1] * scaleY
+
+        ctx.beginPath()
+        ctx.arc(cx, cy, 4, 0, Math.PI * 2)
+        ctx.fillStyle = color
+        ctx.fill()
+
+        ctx.beginPath()
+        ctx.arc(cx, cy, 8, 0, Math.PI * 2)
+        ctx.strokeStyle = color
+        ctx.lineWidth = 1
+        ctx.globalAlpha = 0.4
+        ctx.stroke()
+        ctx.globalAlpha = 1
+      }
+
+      ctx.fillStyle = color
+      ctx.font = "bold 12px Consolas, monospace"
+      ctx.fillText(label + "(t)", 8, 14)
+
+      if (data.length > 0) {
+        const val = data[data.length - 1]
+        ctx.fillStyle = "#ffffff"
+        ctx.font = "11px Consolas, monospace"
+        ctx.textAlign = "right"
+        ctx.fillText(val.toFixed(3), w - 8, 14)
+        ctx.textAlign = "left"
+      }
+
+      ctx.fillStyle = "rgba(150,170,200,0.5)"
+      ctx.font = "10px Consolas, monospace"
+      ctx.fillText("+" + amplitude.toFixed(1), 4, midY - (h / 2 - 18))
+      ctx.fillText("-" + amplitude.toFixed(1), 4, midY + (h / 2 - 10))
+    }
+
+    function resizeCharts() {
+      const canvases = [
+        document.getElementById("chart-phi"),
+        document.getElementById("chart-emf")
+      ]
+
+      const narrow = window.innerWidth < 900
+      const maxWidth = Math.min(narrow ? window.innerWidth - 72 : 360, 360)
+      const width = Math.max(240, Math.floor(maxWidth))
+      const height = 130
+
+      canvases.forEach(function(canvas) {
+        canvas.width = width
+        canvas.height = height
+        canvas.style.width = width + "px"
+        canvas.style.height = height + "px"
+      })
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying
+      const btn = document.getElementById("btn-play")
+
+      if (isPlaying) {
+        btn.innerHTML = "<span class='block text-base mb-0.5'>⏸</span>暂停"
+        btn.classList.add("active")
+      } else {
+        btn.innerHTML = "<span class='block text-base mb-0.5'>▶</span>播放"
+        btn.classList.remove("active")
+      }
+    }
+
+    function resetSimulation() {
+      angle = 0
+      totalTime = 0
+      phiData = []
+      emfData = []
+      coilGroup.rotation.y = 0
+      ammeterNeedle.rotation.z = 0
+
+      currentParticles.forEach(function(p, index) {
+        p.mesh.visible = false
+        p.t = index / currentParticles.length
+      })
+
+      updateInfoPanel(0, getPhiValue(0), getEmfValue(0))
+    }
+
+    async function speakExplanation() {
+      const btn = document.getElementById("btn-speech")
+      btn.classList.add("active")
+      btn.innerHTML = "<span class='block text-base mb-0.5'>🔊</span>加载中..."
+
+      try {
+        const response = await fetch("/api/llm/function-call", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            name: "textToAudioNoStream",
+            arguments: {
+              text: "当矩形线圈在匀强磁场中绕垂直于磁场方向的轴匀速转动时，线圈中产生正弦式交变电流。中性面是指线圈平面与磁场方向垂直的位置，此时穿过线圈的磁通量达到最大值，但磁通量变化率为零，因此感应电动势为零。当线圈平面与磁场方向平行时，磁通量为零，但磁通量变化率最大，此时感应电动势达到最大值。线圈每经过中性面一次，电流方向就改变一次，磁通量与感应电动势的波形相差四分之一个周期。",
+              speaker: "FEMALE_YOUTH"
+            }
+          })
+        })
+
+        const result = await response.json()
+        const audioUrl = result && result.data ? (typeof result.data === "string" ? result.data : (result.data.url || result.data.audioUrl)) : (result.url || result.audioUrl)
+
+        if (audioElement) {
+          audioElement.pause()
+          audioElement = null
+        }
+
+        if (audioUrl) {
+          audioElement = new Audio(audioUrl)
+          btn.innerHTML = "<span class='block text-base mb-0.5'>🔊</span>播放中..."
+          audioElement.play()
+
+          audioElement.onended = function() {
+            btn.classList.remove("active")
+            btn.innerHTML = "<span class='block text-base mb-0.5'>🔊</span>语音讲解"
+          }
+
+          audioElement.onerror = function() {
+            btn.classList.remove("active")
+            btn.innerHTML = "<span class='block text-base mb-0.5'>🔊</span>语音讲解"
+          }
+        } else {
+          btn.classList.remove("active")
+          btn.innerHTML = "<span class='block text-base mb-0.5'>🔊</span>语音讲解"
+        }
+      } catch (e) {
+        btn.classList.remove("active")
+        btn.innerHTML = "<span class='block text-base mb-0.5'>🔊</span>语音讲解"
+      }
+    }
+
+    function toggleView() {
+      viewIndex = (viewIndex + 1) % viewPositions.length
+      const pos = viewPositions[viewIndex]
+      const startPos = {
+        x: camera.position.x,
+        y: camera.position.y,
+        z: camera.position.z
+      }
+
+      const duration = 800
+      const startTime = Date.now()
+
+      function animateCamera() {
+        const elapsed = Date.now() - startTime
+        const t = Math.min(elapsed / duration, 1)
+        const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+
+        camera.position.x = startPos.x + (pos.x - startPos.x) * ease
+        camera.position.y = startPos.y + (pos.y - startPos.y) * ease
+        camera.position.z = startPos.z + (pos.z - startPos.z) * ease
+        camera.lookAt(0, 0, 0)
+
+        if (t < 1) {
+          requestAnimationFrame(animateCamera)
+        }
+      }
+
+      animateCamera()
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight
+      camera.updateProjectionMatrix()
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      resizeCharts()
+    }
+
+    document.getElementById("btn-play").addEventListener("click", togglePlay)
+    document.getElementById("btn-reset").addEventListener("click", resetSimulation)
+    document.getElementById("btn-speech").addEventListener("click", speakExplanation)
+    document.getElementById("btn-view").addEventListener("click", toggleView)
+
+    document.getElementById("omega-slider").addEventListener("input", function() {
+      omega = parseFloat(this.value)
+      document.getElementById("omega-display").textContent = omega.toFixed(1) + " rad/s"
+      updateInfoPanel(angle, getPhiValue(angle), getEmfValue(angle))
+    })
+
+    document.getElementById("b-slider").addEventListener("input", function() {
+      B = parseFloat(this.value)
+      document.getElementById("b-display").textContent = B.toFixed(1) + " T"
+      updateInfoPanel(angle, getPhiValue(angle), getEmfValue(angle))
+    })
+
+    document.addEventListener("visibilitychange", function() {
+      if (!document.hidden && clock) {
+        clock.getDelta()
+      }
+    })
+
+    window.addEventListener("blur", function() {
+      if (clock) {
+        clock.getDelta()
+      }
+    })
+
+    window.addEventListener("focus", function() {
+      if (clock) {
+        clock.getDelta()
+      }
+    })
+
+    initThree()
+    updateInfoPanel(0, getPhiValue(0), getEmfValue(0))
+    animate()
+  </script>
+ </body>
+</html>
